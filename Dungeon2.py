@@ -91,6 +91,8 @@ i = random.randint(1, 10)
 antal_dorrar = 0
 open_door = 0
 closed_door = 0
+door1 = 0
+door0 = 0
 HORIZONTAL = 1
 UP = 2
 DOWN = 0
@@ -349,70 +351,60 @@ class Enemy(Entity):
                         CoinYposs1 = self.y
                         Coin1 = Object(CoinXposs1 + 5, CoinYposs1 + 5, 25, 25, pygame.image.load("Coin.png"))
                         coins_on_screen += 1
-                        print("Coin 1 fixade nya kordinater och den har skapats på kordinat " + str(self.x) + " " + str(self.y))
 
                     elif Coin2 not in objects:
                         CoinXposs2 = self.x
                         CoinYposs2 = self.y
                         Coin2 = Object(CoinXposs2 + 5, CoinYposs2 + 5, 25, 25, pygame.image.load("Coin.png"))
                         coins_on_screen += 1
-                        print("Coin 2 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
                     elif Coin3 not in objects:
                         CoinXposs3 = self.x
                         CoinYposs3 = self.y
                         Coin3 = Object(CoinXposs3 + 5, CoinYposs3 + 5, 25, 25, pygame.image.load("Coin.png"))
                         coins_on_screen += 1
-                        print("Coin 3 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
                     elif Coin4 not in objects:
                         CoinXposs4 = self.x
                         CoinYposs4 = self.y
                         Coin4 = Object(CoinXposs4 + 5, CoinYposs4 + 5, 25, 25, pygame.image.load("Coin.png"))
                         coins_on_screen += 1
-                        print("Coin 4 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
                     elif Coin5 not in objects:
                         CoinXposs5 = self.x
                         CoinYposs5 = self.y
                         Coin5 = Object(CoinXposs5 + 5, CoinYposs5 + 5, 25, 25, pygame.image.load("Coin.png"))
                         coins_on_screen += 1
-                        print("Coin 5 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
                     elif Coin6 not in objects:
                         CoinXposs6 = self.x
                         CoinYposs6 = self.y
                         Coin6 = Object(CoinXposs6 + 5, CoinYposs6 + 5, 25, 25, pygame.image.load("Coin.png"))
                         coins_on_screen += 1
-                        print("Coin 6 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
                     elif Coin7 not in objects:
                         CoinXposs7 = self.x
                         CoinYposs7 = self.y
                         Coin7 = Object(CoinXposs7 + 5, CoinYposs7 + 5, 25, 25, pygame.image.load("Coin.png"))
                         coins_on_screen += 1
-                        print("Coin 7 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
                     elif Coin8 not in objects:
                         CoinXposs8 = self.x
                         CoinYposs8 = self.y
                         Coin8 = Object(CoinXposs8 + 5, CoinYposs8 + 5, 25, 25, pygame.image.load("Coin.png"))
                         coins_on_screen += 1
-                        print("Coin 8 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
                     elif Coin9 not in objects:
                         CoinXposs9 = self.x
                         CoinYposs9 = self.y
                         Coin9 = Object(CoinXposs9 + 5, CoinYposs9 + 5, 25, 25, pygame.image.load("Coin.png"))
                         coins_on_screen += 1
-                        print("Coin 9 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
                     elif Coin10 not in objects:
                         CoinXposs10 = self.x
                         CoinYposs10 = self.y
                         Coin10 = Object(CoinXposs10 + 5, CoinYposs10 + 5, 25, 25, pygame.image.load("Coin.png"))
                         coins_on_screen += 1
-                        print("Coin 10 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
     def destroy(self):
         objects.remove(self)
@@ -421,7 +413,6 @@ class Enemy(Entity):
 
 is_game_over = False
 player_input = {"left": False, "right": False, "up": False, "down": False}
-print(antal_nycklar)
 
 
 class doors():
@@ -553,48 +544,45 @@ def locked_chest(openK, open_chest, closed_chest, antal_kistor, w):
     return openK, open_chest, closed_chest, antal_kistor
 
 
-def locked_door(x, open_door, closed_door,antal_dorrar):
-    if x == False:              #inga enemies
-        if antal_dorrar == 0:
+def locked_door(closed, open_door, closed_door,antal_dorrar):
+    global door1
+    global door0
+    if closed == False: # dörren ska vara öppen
+        if antal_dorrar == 0: #Skapar första dörren
             door0 = Object(WINDOW_SIZE[0] / 2 - 50, 17, 100, 100, pygame.image.load("opened_door.png"))
+            objects.remove(door0)
+            objects.insert(0,door0)
             open_door += 1
             antal_dorrar += 1
-        elif antal_dorrar != 0:
+            print("skapade första dörren")
+        elif closed_door != 0: #går från en stängd dörr till en öppen dörr
             if open_door == 0:
+                objects.remove(door1)
                 door0 = Object(WINDOW_SIZE[0] / 2 - 50, 17, 100, 100, pygame.image.load("opened_door.png"))
+                objects.remove(door0)
+                objects.insert(1, door0)
                 open_door += 1
-                door1 = Object(WINDOW_SIZE[0] / 2 - 50, 17, 100, 100, pygame.image.load("closed_door.png"))
-                if door1 in objects:
-                    objects.remove(door1)
+                print("tog bort en stängd dörr")
                 closed_door -= 1
-            elif closed_door != 0:
-                door1 = Object(WINDOW_SIZE[0] / 2 - 50, 17, 100, 100, pygame.image.load("closed_door.png"))
-                if door1 in objects:
-                    objects.remove(door1)
-                    objects.remove(door1)
-                closed_door -= 1
-                antal_dorrar -= 1
-    if open == True:               #finns enemies
-        if antal_dorrar == 0:
-            door1 = Object(WINDOW_SIZE[0] / 2 - 50, 17, 100, 100, pygame.image.load("closed_door.png"))
-            closed_door += 1
-            antal_dorrar += 1
-        elif antal_dorrar != 0:
+                print("skapade en ny öppen dörr")
+
+    if closed == True: # dörren ska vara stängd
+        if open_door != 0: #går från en öppen dörr till en stängd dörr
             if closed_door == 0:
+                objects.remove(door0)
                 door1 = Object(WINDOW_SIZE[0] / 2 - 50, 17, 100, 100, pygame.image.load("closed_door.png"))
+                objects.remove(door1)
+                objects.insert(1, door1)
                 closed_door += 1
-                door0 = Object(WINDOW_SIZE[0] / 2 - 50, 17, 100, 100, pygame.image.load("opened_door.png"))
-                if door0 in objects:
-                    objects.remove(door0)
                 open_door -= 1
-            elif open_door != 0:
-                door0 = Object(WINDOW_SIZE[0] / 2 - 50, 17, 100, 100, pygame.image.load("opened_door.png"))
-                if door0 in objects:
-                    objects.remove(door0)
-                    objects.remove(door0)
-                open_door -= 1
-                antal_dorrar -= 1
-    return x, open_door, closed_door, antal_dorrar
+                print("skapade en ny stängd dörr")
+
+
+
+
+
+
+    return closed, open_door, closed_door, antal_dorrar
 
 
 # test_object = Object(400, 400, 500, 500, pygame.image.load("pixilart-drawing (6).png"))
@@ -671,7 +659,7 @@ while True:
             objects.remove(closed_door_bottom)
             objects.insert(0, closed_door_bottom)
             nyckel = Object(700, 37, 48, 48, pygame.image.load("key_display.png"))
-            objects.insert(0,nyckel)
+            objects.insert(0, nyckel)
             d += 1
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -789,7 +777,6 @@ while True:
                 coins_on_screen -= 1
                 t = random.randint(1, 3)
                 antal_coins += t
-                print("Koin 1 lade till " + str(t) + " coins")
 
         if CoinXposs2 != 0 and CoinYposs2 != 0:
             if player.x in range(int(CoinXposs2 - 70), int(CoinXposs2 + 70)) and player.y in range(
@@ -799,7 +786,6 @@ while True:
                 coins_on_screen -= 1
                 t = random.randint(1, 3)
                 antal_coins += t
-                print("Koin 2 lade till " + str(t) + " coins")
 
         if CoinXposs3 != 0 and CoinYposs3 != 0:
             if player.x in range(int(CoinXposs3 - 70), int(CoinXposs3 + 70)) and player.y in range(
@@ -809,7 +795,6 @@ while True:
                 coins_on_screen -= 1
                 t = random.randint(1, 3)
                 antal_coins += t
-                print("Koin 3 lade till " + str(t) + " coins")
 
         if CoinXposs4 != 0 and CoinYposs4 != 0:
             if player.x in range(int(CoinXposs4 - 70), int(CoinXposs4 + 70)) and player.y in range(
@@ -819,7 +804,6 @@ while True:
                 coins_on_screen -= 1
                 t = random.randint(1, 3)
                 antal_coins += t
-                print("Koin 4 lade till " + str(t) + " coins")
 
         if CoinXposs5 != 0 and CoinYposs5 != 0:
             if player.x in range(int(CoinXposs5 - 70), int(CoinXposs5 + 70)) and player.y in range(
@@ -829,7 +813,6 @@ while True:
                 coins_on_screen -= 1
                 t = random.randint(1, 3)
                 antal_coins += t
-                print("Koin 5 lade till " + str(t) + " coins")
 
         if CoinXposs6 != 0 and CoinYposs6 != 0:
             if player.x in range(int(CoinXposs6 - 70), int(CoinXposs6 + 70)) and player.y in range(
@@ -839,7 +822,6 @@ while True:
                 coins_on_screen -= 1
                 t = random.randint(1, 3)
                 antal_coins += t
-                print("Koin 6 lade till " + str(t) + " coins")
 
         if CoinXposs7 != 0 and CoinYposs7 != 0:
             if player.x in range(int(CoinXposs7 - 70), int(CoinXposs7 + 70)) and player.y in range(
@@ -849,7 +831,6 @@ while True:
                 coins_on_screen -= 1
                 t = random.randint(1, 3)
                 antal_coins += t
-                print("Koin 7 lade till " + str(t) + " coins")
 
         if CoinXposs8 != 0 and CoinYposs8 != 0:
             if player.x in range(int(CoinXposs8 - 70), int(CoinXposs8 + 70)) and player.y in range(
@@ -859,7 +840,6 @@ while True:
                 coins_on_screen -= 1
                 t = random.randint(1, 3)
                 antal_coins += t
-                print("Koin 8 lade till " + str(t) + " coins")
 
         if CoinXposs9 != 0 and CoinYposs9 != 0:
             if player.x in range(int(CoinXposs9 - 70), int(CoinXposs9 + 70)) and player.y in range(
@@ -869,7 +849,6 @@ while True:
                 coins_on_screen -= 1
                 t = random.randint(1, 3)
                 antal_coins += t
-                print("Koin 9 lade till " + str(t) + " coins")
 
         if CoinXposs10 != 0 and CoinYposs10 != 0:
             if player.x in range(int(CoinXposs10 - 70), int(CoinXposs10 + 70)) and player.y in range(
@@ -879,7 +858,6 @@ while True:
                 coins_on_screen -= 1
                 t = random.randint(1, 3)
                 antal_coins += t
-                print("Koin 10 lade till " + str(t) + " coins")
 
 
 
@@ -987,6 +965,4 @@ while True:
         #nedre sidan öppen kista
         if player.x < 646 and player.x > 572 and player.y in range(380, 385):
             player.y = 385
-    print("Coins_on_screen = " + str(coins_on_screen))
-
     update_screen()
