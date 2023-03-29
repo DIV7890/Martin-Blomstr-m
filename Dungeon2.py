@@ -3,7 +3,7 @@ import random
 import time
 import math
 # testing github
-
+# neigour
 open = False
 openK = False
 
