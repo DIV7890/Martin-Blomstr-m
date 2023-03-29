@@ -393,21 +393,21 @@ class Enemy(Entity):
                         coins_on_screen += 1
                         print("Coin 7 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
-                    if Coin8 not in objects:
+                    elif Coin8 not in objects:
                         CoinXposs8 = self.x
                         CoinYposs8 = self.y
                         Coin8 = Object(CoinXposs8 + 5, CoinYposs8 + 5, 25, 25, pygame.image.load("Coin.png"))
                         coins_on_screen += 1
                         print("Coin 8 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
-                    if Coin9 not in objects:
+                    elif Coin9 not in objects:
                         CoinXposs9 = self.x
                         CoinYposs9 = self.y
                         Coin9 = Object(CoinXposs9 + 5, CoinYposs9 + 5, 25, 25, pygame.image.load("Coin.png"))
                         coins_on_screen += 1
                         print("Coin 9 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
-                    if Coin10 not in objects:
+                    elif Coin10 not in objects:
                         CoinXposs10 = self.x
                         CoinYposs10 = self.y
                         Coin10 = Object(CoinXposs10 + 5, CoinYposs10 + 5, 25, 25, pygame.image.load("Coin.png"))
