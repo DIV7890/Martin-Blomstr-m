@@ -6,7 +6,9 @@ import math
 open = False
 openK = False
 
+z = 0
 pygame.init()
+
 pygame.font.get_init()
 
 TEXT_FONT = pygame.font.Font("dungeon.font.otf",32)
@@ -76,6 +78,7 @@ CoinXposs10 = 0
 CoinYposs10 = 0
 coins_on_screen = 0
 antal_coins = 0
+ak47 = 0
 
 room_counter = 15
 antal_kistor = 0
@@ -115,6 +118,7 @@ objects = []
 bullets = []
 enemies = []
 Doors = []
+weapons_on_ground = []
 
 class Object:
     def __init__(self, x, y, width, height, image):
@@ -453,7 +457,7 @@ def check_input(key, value):
     elif key == pygame.K_l:
         enemy_spawner1()
     elif key == pygame.K_o:
-        ak47()
+        ak47def()
     elif key == pygame.K_e:
         if antal_oppnade_kistor_denna_runda == 0:
             if player.x in range(int(WINDOW_SIZE[0] / 2 - 100), int(WINDOW_SIZE[0] / 2)) and player.y in range(int(WINDOW_SIZE[1] / 2 - 50),int(WINDOW_SIZE[1] / 2 + 50)) and closed_chest > 0 and antal_nycklar > 0:
@@ -505,6 +509,8 @@ def locked_chest(openK, open_chest, closed_chest, antal_kistor, w):
     global chest_rect
     global ak47Xposs
     global ak47Yposs
+    global ak47
+    global z
     if math.gcd(15,room_counter) == 15 and len(enemies) == 0 and antal_kistor == 0 and room_counter != 0:
         chest1 = Object(WINDOW_SIZE[0] / 2 - 50, WINDOW_SIZE[1] / 2, 100, 100, pygame.image.load("closed_chest.png"))
         chest_rect = pygame.Rect(chest1.x, chest1.y, chest1.width, chest1.height)
@@ -534,6 +540,13 @@ def locked_chest(openK, open_chest, closed_chest, antal_kistor, w):
                     HeartYposs5 = (WINDOW_SIZE[1] / 2 - 100)
                     Heart5 = Object(HeartXposs5, HeartYposs5, 32, 32, pygame.image.load("full_heart.png"))
                     hearts_on_screen += 1
+                if "ak47" not in weapons_on_ground:
+                    r = random.randint(1, 1)
+                    if r == 1:
+                        ak47Xposs = (WINDOW_SIZE[0] / 2 + 20)
+                        ak47Yposs = (WINDOW_SIZE[1] / 2 + 100)
+                        ak47 = Object(ak47Xposs, ak47Yposs, 32, 32, pygame.image.load("ak47.png"))
+                        weapons_on_ground.append("ak47")
 
     if math.gcd(15,room_counter) != 15 and room_counter != 0:
         if antal_kistor != 0:
@@ -547,11 +560,6 @@ def locked_chest(openK, open_chest, closed_chest, antal_kistor, w):
                     objects.remove(chest0)
                     open_chest -= 1
                     antal_kistor -= 1
-    r = random.randint(1,1)
-    if r == 1:
-        ak47Xposs = (WINDOW_SIZE[0] / 2 + 20)
-        ak47Yposs = (WINDOW_SIZE[1] / 2 + 100)
-        ak47 = Object(ak47Xposs, ak47Yposs, 32, 32, pygame.image.load("ak47.png"))
 
     return openK, open_chest, closed_chest, antal_kistor
 
@@ -602,7 +610,7 @@ target = Object(0, 0, 40, 40, pygame.image.load("cursor.png"))
 pygame.mouse.set_visible(False)
 
 
-def ak47():
+def ak47def():
     global shoot_cooldown
     global damage
     global weapon
@@ -945,12 +953,18 @@ while True:
                     CoinYposs10 = 0
                     objects.remove(Coin10)
                     coins_on_screen -= 1
+
             player.x = WINDOW_SIZE[0] / 2 - 25
             player.y = WINDOW_SIZE[1]
             enemy_spawner1()
             antal_oppnade_kistor_denna_runda = 0
             hearts_on_screen = 0
             coins_on_screen = 0
+
+    if player.x in range(int(ak47Xposs - 70), int(ak47Xposs + 70)) and player.y in range(int(ak47Yposs - 70), int(ak47Yposs + 70)) and ak47 in objects:
+        objects.remove(ak47)
+        ak47def()
+        print("du har rört en ak47")
 
     openK, open_chest, closed_chest, antal_kistor = locked_chest(openK, open_chest, closed_chest, antal_kistor, w)
 
