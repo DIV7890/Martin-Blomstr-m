@@ -24,6 +24,9 @@ BOUNDS_Y = (80, 585)
 
 replay = True
 
+damage = 1
+shoot_cooldown = 1
+weapon = "pistol"
 key0 = 0
 antal_oppnade_kistor_denna_runda = 0
 unlock_chest = False
@@ -39,7 +42,8 @@ HeartXposs4 = 0
 HeartYposs4 = 0
 HeartXposs5 = 0
 HeartYposs5 = 0
-
+ak47Xposs = 0
+ak47Yposs = 0
 Coin1 = 0
 Coin2 = 0
 Coin3 = 0
@@ -73,14 +77,14 @@ CoinYposs10 = 0
 coins_on_screen = 0
 antal_coins = 0
 
-room_counter = 0
+room_counter = 15
 antal_kistor = 0
 open_chest = 0
 closed_chest = 0
 keys_on_screen = 0
 KeyXposs = 0
 KeyYposs = 0
-antal_nycklar = 0
+antal_nycklar = 1
 number_of_enemys = 0
 last_activation_time = 0
 d = 0
@@ -111,7 +115,6 @@ objects = []
 bullets = []
 enemies = []
 Doors = []
-
 
 class Object:
     def __init__(self, x, y, width, height, image):
@@ -217,7 +220,7 @@ class Enemy(Entity):
         self.width = 0
         self.height = 0
 
-        self.health = 2
+        self.health = 8
         self.collider = [width / 2.5, height / 1.5]
         enemies.append(self)
 
@@ -449,6 +452,8 @@ def check_input(key, value):
         player_input["down"] = value
     elif key == pygame.K_l:
         enemy_spawner1()
+    elif key == pygame.K_o:
+        ak47()
     elif key == pygame.K_e:
         if antal_oppnade_kistor_denna_runda == 0:
             if player.x in range(int(WINDOW_SIZE[0] / 2 - 100), int(WINDOW_SIZE[0] / 2)) and player.y in range(int(WINDOW_SIZE[1] / 2 - 50),int(WINDOW_SIZE[1] / 2 + 50)) and closed_chest > 0 and antal_nycklar > 0:
@@ -498,6 +503,8 @@ def locked_chest(openK, open_chest, closed_chest, antal_kistor, w):
     global Heart5
     global full_heart
     global chest_rect
+    global ak47Xposs
+    global ak47Yposs
     if math.gcd(15,room_counter) == 15 and len(enemies) == 0 and antal_kistor == 0 and room_counter != 0:
         chest1 = Object(WINDOW_SIZE[0] / 2 - 50, WINDOW_SIZE[1] / 2, 100, 100, pygame.image.load("closed_chest.png"))
         chest_rect = pygame.Rect(chest1.x, chest1.y, chest1.width, chest1.height)
@@ -540,6 +547,11 @@ def locked_chest(openK, open_chest, closed_chest, antal_kistor, w):
                     objects.remove(chest0)
                     open_chest -= 1
                     antal_kistor -= 1
+    r = random.randint(1,1)
+    if r == 1:
+        ak47Xposs = (WINDOW_SIZE[0] / 2 + 20)
+        ak47Yposs = (WINDOW_SIZE[1] / 2 + 100)
+        ak47 = Object(ak47Xposs, ak47Yposs, 32, 32, pygame.image.load("ak47.png"))
 
     return openK, open_chest, closed_chest, antal_kistor
 
@@ -554,7 +566,6 @@ def locked_door(closed, open_door, closed_door,antal_dorrar):
             objects.insert(0,door0)
             open_door += 1
             antal_dorrar += 1
-            print("skapade första dörren")
         elif closed_door != 0: #går från en stängd dörr till en öppen dörr
             if open_door == 0:
                 objects.remove(door1)
@@ -562,9 +573,7 @@ def locked_door(closed, open_door, closed_door,antal_dorrar):
                 objects.remove(door0)
                 objects.insert(1, door0)
                 open_door += 1
-                print("tog bort en stängd dörr")
                 closed_door -= 1
-                print("skapade en ny öppen dörr")
 
     if closed == True: # dörren ska vara stängd
         if open_door != 0: #går från en öppen dörr till en stängd dörr
@@ -575,7 +584,6 @@ def locked_door(closed, open_door, closed_door,antal_dorrar):
                 objects.insert(1, door1)
                 closed_door += 1
                 open_door -= 1
-                print("skapade en ny stängd dörr")
 
 
 
@@ -594,10 +602,17 @@ target = Object(0, 0, 40, 40, pygame.image.load("cursor.png"))
 pygame.mouse.set_visible(False)
 
 
+def ak47():
+    global shoot_cooldown
+    global damage
+    global weapon
+    shoot_cooldown = 0.2
+    damage = 2
+    weapon = "ak47"
 def shoot():
     global last_activation_time
     current_time = time.time()
-    if current_time - last_activation_time >= 0:
+    if current_time - last_activation_time >= shoot_cooldown:
         player_center = player.get_center()
         bullet = Object(player_center[0], player_center[1], 16, 16, pygame.image.load("bullet.png"))
 
@@ -710,7 +725,7 @@ while True:
             continue
         for b in bullets:
             if check_collisions(b, e):
-                e.take_damage(1, antal_nycklar)
+                e.take_damage(damage, antal_nycklar)
                 bullets.remove(b)
                 objects.remove(b)
 
