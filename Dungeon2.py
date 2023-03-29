@@ -40,6 +40,16 @@ HeartYposs4 = 0
 HeartXposs5 = 0
 HeartYposs5 = 0
 
+Coin1 = 0
+Coin2 = 0
+Coin3 = 0
+Coin4 = 0
+Coin5 = 0
+Coin6 = 0
+Coin7 = 0
+Coin8 = 0
+Coin9 = 0
+Coin10 = 0
 CoinXposs1 = 0
 CoinYposs1 = 0
 CoinXposs2 = 0
@@ -334,94 +344,75 @@ class Enemy(Entity):
             r = random.randint(1, 2)
             if r == 1:
                 if coins_on_screen < 10:
-                    if coins_on_screen == 0:
-                        if CoinXposs1 == 0 and CoinYposs1 == 0:
-                            CoinXposs1 = self.x
-                            CoinYposs1 = self.y
-                            Coin1 = Object(CoinXposs1 + 5, CoinYposs1 + 5, 25, 25, pygame.image.load("Coin.png"))
-                            coins_on_screen += 1
-                            print("Coin 1 fixade nya kordinater och den har skapats på kordinat " + str(
-                                self.x) + " " + str(self.y))
+                    if Coin1 in objects:
+                        CoinXposs1 = self.x
+                        CoinYposs1 = self.y
+                        Coin1 = Object(CoinXposs1 + 5, CoinYposs1 + 5, 25, 25, pygame.image.load("Coin.png"))
+                        coins_on_screen += 1
+                        print("Coin 1 fixade nya kordinater och den har skapats på kordinat " + str(self.x) + " " + str(self.y))
 
-                    elif coins_on_screen == 1:
-                        if CoinXposs2 == 0 and CoinYposs2 == 0:
-                            CoinXposs2 = self.x
-                            CoinYposs2 = self.y
-                            Coin2 = Object(CoinXposs2 + 5, CoinYposs2 + 5, 25, 25, pygame.image.load("Coin.png"))
-                            coins_on_screen += 1
-                            print("Coin 2 fixade nya kordinater " + str(self.x) + " " + str(self.y))
+                    if Coin2 in objects:
+                        CoinXposs2 = self.x
+                        CoinYposs2 = self.y
+                        Coin2 = Object(CoinXposs2 + 5, CoinYposs2 + 5, 25, 25, pygame.image.load("Coin.png"))
+                        coins_on_screen += 1
+                        print("Coin 2 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
+                    if Coin3 in objects:
+                        CoinXposs3 = self.x
+                        CoinYposs3 = self.y
+                        Coin3 = Object(CoinXposs3 + 5, CoinYposs3 + 5, 25, 25, pygame.image.load("Coin.png"))
+                        coins_on_screen += 1
+                        print("Coin 3 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
-                    elif coins_on_screen == 2:
-                        if CoinXposs3 == 0 and CoinYposs3 == 0:
-                            CoinXposs3 = self.x
-                            CoinYposs3 = self.y
-                            Coin3 = Object(CoinXposs3 + 5, CoinYposs3 + 5, 25, 25, pygame.image.load("Coin.png"))
-                            coins_on_screen += 1
-                            print("Coin 3 fixade nya kordinater " + str(self.x) + " " + str(self.y))
+                    if Coin4 in objects:
+                        CoinXposs4 = self.x
+                        CoinYposs4 = self.y
+                        Coin4 = Object(CoinXposs4 + 5, CoinYposs4 + 5, 25, 25, pygame.image.load("Coin.png"))
+                        coins_on_screen += 1
+                        print("Coin 4 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
+                    if Coin5 in objects:
+                        CoinXposs5 = self.x
+                        CoinYposs5 = self.y
+                        Coin5 = Object(CoinXposs5 + 5, CoinYposs5 + 5, 25, 25, pygame.image.load("Coin.png"))
+                        coins_on_screen += 1
+                        print("Coin 5 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
-                    elif coins_on_screen == 3:
-                        if CoinXposs4 == 0 and CoinYposs4 == 0:
-                            CoinXposs4 = self.x
-                            CoinYposs4 = self.y
-                            Coin4 = Object(CoinXposs4 + 5, CoinYposs4 + 5, 25, 25, pygame.image.load("Coin.png"))
-                            coins_on_screen += 1
-                            print("Coin 4 fixade nya kordinater " + str(self.x) + " " + str(self.y))
+                    if Coin6 in objects:
+                        CoinXposs6 = self.x
+                        CoinYposs6 = self.y
+                        Coin6 = Object(CoinXposs6 + 5, CoinYposs6 + 5, 25, 25, pygame.image.load("Coin.png"))
+                        coins_on_screen += 1
+                        print("Coin 6 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
+                    if Coin7 in objects:
+                        CoinXposs7 = self.x
+                        CoinYposs7 = self.y
+                        Coin7 = Object(CoinXposs7 + 5, CoinYposs7 + 5, 25, 25, pygame.image.load("Coin.png"))
+                        coins_on_screen += 1
+                        print("Coin 7 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
-                    elif coins_on_screen == 4:
-                        if CoinXposs5 == 0 and CoinYposs5 == 0:
-                            CoinXposs5 = self.x
-                            CoinYposs5 = self.y
-                            Coin5 = Object(CoinXposs5 + 5, CoinYposs5 + 5, 25, 25, pygame.image.load("Coin.png"))
-                            coins_on_screen += 1
-                            print("Coin 5 fixade nya kordinater " + str(self.x) + " " + str(self.y))
+                    if Coin8 in objects:
+                        CoinXposs8 = self.x
+                        CoinYposs8 = self.y
+                        Coin8 = Object(CoinXposs8 + 5, CoinYposs8 + 5, 25, 25, pygame.image.load("Coin.png"))
+                        coins_on_screen += 1
+                        print("Coin 8 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
+                    if Coin9 in objects:
+                        CoinXposs9 = self.x
+                        CoinYposs9 = self.y
+                        Coin9 = Object(CoinXposs9 + 5, CoinYposs9 + 5, 25, 25, pygame.image.load("Coin.png"))
+                        coins_on_screen += 1
+                        print("Coin 9 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
-                    elif coins_on_screen == 5:
-                        if CoinXposs6 == 0 and CoinYposs6 == 0:
-                            CoinXposs6 = self.x
-                            CoinYposs6 = self.y
-                            Coin6 = Object(CoinXposs6 + 5, CoinYposs6 + 5, 25, 25, pygame.image.load("Coin.png"))
-                            coins_on_screen += 1
-                            print("Coin 6 fixade nya kordinater " + str(self.x) + " " + str(self.y))
-
-
-                    elif coins_on_screen == 6:
-                        if CoinXposs7 == 0 and CoinYposs7 == 0:
-                            CoinXposs7 = self.x
-                            CoinYposs7 = self.y
-                            Coin7 = Object(CoinXposs7 + 5, CoinYposs7 + 5, 25, 25, pygame.image.load("Coin.png"))
-                            coins_on_screen += 1
-                            print("Coin 7 fixade nya kordinater " + str(self.x) + " " + str(self.y))
-
-
-                    elif coins_on_screen == 7:
-                        if CoinXposs8 == 0 and CoinYposs8 == 0:
-                            CoinXposs8 = self.x
-                            CoinYposs8 = self.y
-                            Coin8 = Object(CoinXposs8 + 5, CoinYposs8 + 5, 25, 25, pygame.image.load("Coin.png"))
-                            coins_on_screen += 1
-                            print("Coin 8 fixade nya kordinater " + str(self.x) + " " + str(self.y))
-
-
-                    elif coins_on_screen == 8:
-                        if CoinXposs9 == 0 and CoinYposs9 == 0:
-                            CoinXposs9 = self.x
-                            CoinYposs9 = self.y
-                            Coin9 = Object(CoinXposs9 + 5, CoinYposs9 + 5, 25, 25, pygame.image.load("Coin.png"))
-                            coins_on_screen += 1
-                            print("Coin 9 fixade nya kordinater " + str(self.x) + " " + str(self.y))
-
-
-                    elif coins_on_screen == 9:
-                        if CoinXposs10 == 0 and CoinYposs10 == 0:
-                            CoinXposs10 = self.x
-                            CoinYposs10 = self.y
-                            Coin10 = Object(CoinXposs10 + 5, CoinYposs10 + 5, 25, 25, pygame.image.load("Coin.png"))
-                            coins_on_screen += 1
-                            print("Coin 10 fixade nya kordinater " + str(self.x) + " " + str(self.y))
+                    if Coin10 in objects:
+                        CoinXposs10 = self.x
+                        CoinYposs10 = self.y
+                        Coin10 = Object(CoinXposs10 + 5, CoinYposs10 + 5, 25, 25, pygame.image.load("Coin.png"))
+                        coins_on_screen += 1
+                        print("Coin 10 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
     def destroy(self):
         objects.remove(self)
