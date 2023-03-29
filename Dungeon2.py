@@ -351,42 +351,42 @@ class Enemy(Entity):
                         coins_on_screen += 1
                         print("Coin 1 fixade nya kordinater och den har skapats på kordinat " + str(self.x) + " " + str(self.y))
 
-                    if Coin2 not in objects:
+                    elif Coin2 not in objects:
                         CoinXposs2 = self.x
                         CoinYposs2 = self.y
                         Coin2 = Object(CoinXposs2 + 5, CoinYposs2 + 5, 25, 25, pygame.image.load("Coin.png"))
                         coins_on_screen += 1
                         print("Coin 2 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
-                    if Coin3 not in objects:
+                    elif Coin3 not in objects:
                         CoinXposs3 = self.x
                         CoinYposs3 = self.y
                         Coin3 = Object(CoinXposs3 + 5, CoinYposs3 + 5, 25, 25, pygame.image.load("Coin.png"))
                         coins_on_screen += 1
                         print("Coin 3 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
-                    if Coin4 not in objects:
+                    elif Coin4 not in objects:
                         CoinXposs4 = self.x
                         CoinYposs4 = self.y
                         Coin4 = Object(CoinXposs4 + 5, CoinYposs4 + 5, 25, 25, pygame.image.load("Coin.png"))
                         coins_on_screen += 1
                         print("Coin 4 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
-                    if Coin5 not in objects:
+                    elif Coin5 not in objects:
                         CoinXposs5 = self.x
                         CoinYposs5 = self.y
                         Coin5 = Object(CoinXposs5 + 5, CoinYposs5 + 5, 25, 25, pygame.image.load("Coin.png"))
                         coins_on_screen += 1
                         print("Coin 5 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
-                    if Coin6 not in objects:
+                    elif Coin6 not in objects:
                         CoinXposs6 = self.x
                         CoinYposs6 = self.y
                         Coin6 = Object(CoinXposs6 + 5, CoinYposs6 + 5, 25, 25, pygame.image.load("Coin.png"))
                         coins_on_screen += 1
                         print("Coin 6 fixade nya kordinater " + str(self.x) + " " + str(self.y))
 
-                    if Coin7 not in objects:
+                    elif Coin7 not in objects:
                         CoinXposs7 = self.x
                         CoinYposs7 = self.y
                         Coin7 = Object(CoinXposs7 + 5, CoinYposs7 + 5, 25, 25, pygame.image.load("Coin.png"))
