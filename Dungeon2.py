@@ -22,6 +22,7 @@ Transparant = (0, 0, 0, 0)
 WINDOW_SIZE = (1280, 710)
 WINDOW_TITLE = "The game"
 WINDOW_CENTER = (0, 0)
+screen = pygame.display.set_mode((1280 , 720))
 
 BOUNDS_X = (35, 1250)
 BOUNDS_Y = (80, 585)
@@ -127,13 +128,15 @@ Doors = []
 weapons_on_ground = []
 
 class button():
-    def __init__(self,x,y,image):
-        self.image = image
+    def __init__(self,x,y,image,scale):
+        width = image.get_width()
+        height = image.get_height()
+        self.image = pygame.transform.scale(image, (int(width*scale),int(height*scale)))
         self.rect = self.image.get_rect()
         self.rect.topleft = (x,y)
 
     def draw(self):
-        WINDOW.blit(self.image, self.rect.x, self.rect.y)
+        screen.blit(self.image, self.rect.topleft)
 
 class Object:
     def __init__(self, x, y, width, height, image):
@@ -1124,7 +1127,7 @@ def playing():
 def home_screen():
     background = pygame.transform.scale(pygame.image.load("home_screen.jpg"), (1280, 720))
     start_image = pygame.image.load("start_button.png").convert_alpha()
-    start_button = button(WINDOW[0] / 2, WINDOW[1] / 2, start_image)
+    start_button = button(640, 360, start_image, 5)
     while True:
         update_screen()
         for event in pygame.event.get():
@@ -1132,7 +1135,5 @@ def home_screen():
                 exit()
         WINDOW.blit(background, WINDOW_CENTER)
         start_button.draw()
-
-
 
 home_screen()
