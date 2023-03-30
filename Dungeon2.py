@@ -6,6 +6,7 @@ import math
 open = False
 openK = False
 pickup_weapon = False
+play = True
 
 z = 0
 pygame.init()
@@ -585,6 +586,12 @@ def locked_chest(openK, open_chest, closed_chest, antal_kistor, w):
                     objects.remove(chest0)
                     open_chest -= 1
                     antal_kistor -= 1
+        if "ak47" in weapons_on_ground:
+            objects.remove(ak47)
+            weapons_on_ground.remove("ak47")
+        if "AWP" in weapons_on_ground:
+            objects.remove(AWP)
+            weapons_on_ground.remove("AWP")
 
     return openK, open_chest, closed_chest, antal_kistor
 
@@ -1043,5 +1050,4 @@ while True:
         #nedre sidan öppen kista
         if player.x < 646 and player.x > 572 and player.y in range(380, 385):
             player.y = 385
-    print(pickup_weapon)
     update_screen()
