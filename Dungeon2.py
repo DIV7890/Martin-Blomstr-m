@@ -28,7 +28,7 @@ BOUNDS_Y = (80, 585)
 replay = True
 
 damage = 1
-shoot_cooldown = 0.5
+shoot_cooldown = 0.25
 vapen = "pistol"
 key0 = 0
 antal_oppnade_kistor_denna_runda = 0
@@ -228,7 +228,7 @@ class Enemy(Entity):
         self.width = 0
         self.height = 0
 
-        self.health = 6
+        self.health = 2
         self.collider = [width / 2.5, height / 1.5]
         enemies.append(self)
 
@@ -768,8 +768,10 @@ while True:
         for b in bullets:
             if check_collisions(b, e):
                 e.take_damage(damage, antal_nycklar)
-                bullets.remove(b)
-                objects.remove(b)
+                if vapen != "AWP":
+                    bullets.remove(b)
+                    objects.remove(b)
+
 
     if len(enemies) != 0:
         open = True
