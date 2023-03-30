@@ -28,7 +28,7 @@ replay = True
 
 damage = 1
 shoot_cooldown = 0.5
-weapon = "pistol"
+vapen = "pistol"
 key0 = 0
 antal_oppnade_kistor_denna_runda = 0
 unlock_chest = False
@@ -611,12 +611,13 @@ pygame.mouse.set_visible(False)
 
 
 def ak47def():
+    global vapen
     global shoot_cooldown
     global damage
     global weapon
     shoot_cooldown = 0.075
     damage = 1
-    weapon = "ak47"
+    vapen = "ak47"
 def shoot():
     global last_activation_time
     current_time = time.time()
