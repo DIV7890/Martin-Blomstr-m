@@ -6,7 +6,7 @@ import math
 open = False
 openK = False
 pickup_weapon = False
-play = True
+play = False
 
 z = 0
 pygame.init()
@@ -133,7 +133,7 @@ class button():
         height = image.get_height()
         self.image = pygame.transform.scale(image, (int(width*scale),int(height*scale)))
         self.rect = self.image.get_rect()
-        self.rect.topleft = (x,y)
+        self.rect.center = (x,y)
 
     def draw(self):
         screen.blit(self.image, self.rect.topleft)
@@ -1124,10 +1124,13 @@ def playing():
             if player.x < 646 and player.x > 572 and player.y in range(380, 385):
                 player.y = 385
         update_screen()
+        print("playing")
 def home_screen():
     background = pygame.transform.scale(pygame.image.load("home_screen.jpg"), (1280, 720))
     start_image = pygame.image.load("start_button.png").convert_alpha()
-    start_button = button(640, 360, start_image, 5)
+    start_button = button(640, 200, start_image, 7)
+    quit_image = pygame.image.load("quit_button.png").convert_alpha()
+    quit_button = button(640, 400, quit_image, 7)
     while True:
         update_screen()
         for event in pygame.event.get():
@@ -1135,5 +1138,9 @@ def home_screen():
                 exit()
         WINDOW.blit(background, WINDOW_CENTER)
         start_button.draw()
+        quit_button.draw()
 
-home_screen()
+
+if play != True:
+    home_screen()
+    playing()
