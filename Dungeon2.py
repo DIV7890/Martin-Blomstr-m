@@ -28,7 +28,9 @@ BOUNDS_Y = (80, 585)
 
 replay = True
 
-damage = 1
+player = 0
+target = 0
+damage = 0.5
 shoot_cooldown = 0.25
 vapen = "pistol"
 key0 = 0
@@ -85,7 +87,7 @@ antal_coins = 0
 ak47 = 0
 AWP = 0
 
-room_counter = 15
+room_counter = 10
 antal_kistor = 0
 open_chest = 0
 closed_chest = 0
@@ -117,13 +119,21 @@ pygame.display.set_caption(WINDOW_TITLE)
 
 CLOCK = pygame.time.Clock()
 
-background = pygame.transform.scale(pygame.image.load("background.png"), WINDOW_SIZE)
 
 objects = []
 bullets = []
 enemies = []
 Doors = []
 weapons_on_ground = []
+
+class button():
+    def __init__(self,x,y,image):
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x,y)
+
+    def draw(self):
+        WINDOW.blit(self.image, self.rect.x, self.rect.y)
 
 class Object:
     def __init__(self, x, y, width, height, image):
@@ -229,7 +239,7 @@ class Enemy(Entity):
         self.width = 0
         self.height = 0
 
-        self.health = 2
+        self.health = 6
         self.collider = [width / 2.5, height / 1.5]
         enemies.append(self)
 
@@ -320,8 +330,6 @@ class Enemy(Entity):
             global Coin8
             global Coin9
             global Coin10
-
-
 
             if keys_on_screen == 0:
                 if r == 1:
@@ -625,21 +633,11 @@ def locked_door(closed, open_door, closed_door,antal_dorrar):
                 closed_door += 1
                 open_door -= 1
 
-
-
-
-
-
     return closed, open_door, closed_door, antal_dorrar
 
 
 # test_object = Object(400, 400, 500, 500, pygame.image.load("pixilart-drawing (6).png"))
 # test_entity = Entity(400, 400, 50, 50, "player-sheet.png", 5)
-player = Player(WINDOW_SIZE[0] / 2, WINDOW_SIZE[1] / 2, 55, 55, "The_man.png", 3)
-
-target = Object(0, 0, 40, 40, pygame.image.load("cursor.png"))
-
-pygame.mouse.set_visible(False)
 
 
 def ak47def():
@@ -655,7 +653,7 @@ def AWPdef():
     global shoot_cooldown
     global damage
     global weapon
-    shoot_cooldown = 3
+    shoot_cooldown = 1.5
     damage = 100
     vapen = "AWP"
 def shoot():
@@ -674,8 +672,6 @@ def shoot():
 
         bullets.append(bullet)
         last_activation_time = current_time
-
-
 
 def check_collisions(obj1, obj2):
     x1, y1 = obj1.get_center()
@@ -710,344 +706,433 @@ def display_ui():
 def update_screen():
     CLOCK.tick(FRAME_RATE)
     pygame.display.update()
+def playing():
+    global a
+    global b
+    global d
+    global antal_coins
+    global is_game_over
+    global open
+    global open_door
+    global closed_door
+    global antal_dorrar
+    global hearts_on_screen
+    global coins_on_screen
+    global ak47Xposs
+    global ak47Yposs
+    global AWPXposs
+    global AWPYposs
+    global openK
+    global open_chest
+    global closed_chest
+    global antal_kistor
+    global room_counter
+    global keys_on_screen
+    global antal_nycklar
+    global HeartXposs1
+    global HeartYposs1
+    global HeartXposs2
+    global HeartYposs2
+    global HeartXposs3
+    global HeartYposs3
+    global HeartXposs4
+    global HeartYposs4
+    global HeartXposs5
+    global HeartYposs5
+    global hearts_on_screen
+    global Heart1
+    global Heart2
+    global Heart3
+    global Heart4
+    global CoinXposs1
+    global CoinYposs1
+    global CoinXposs2
+    global CoinYposs2
+    global CoinXposs3
+    global CoinYposs3
+    global CoinXposs4
+    global CoinYposs4
+    global CoinXposs5
+    global CoinYposs5
+    global CoinXposs6
+    global CoinYposs6
+    global CoinXposs7
+    global CoinYposs7
+    global CoinXposs8
+    global CoinYposs8
+    global CoinXposs9
+    global CoinYposs9
+    global CoinXposs10
+    global CoinYposs10
+    global Coin1
+    global Coin2
+    global Coin3
+    global Coin4
+    global Coin5
+    global Coin6
+    global Coin7
+    global Coin8
+    global Coin9
+    global Coin10
+    global pickup_weapon
+    global antal_oppnade_kistor_denna_runda
+    global player
+    global target
+    WINDOW.fill(BLACK)
+    background = pygame.transform.scale(pygame.image.load("background.png"), WINDOW_SIZE)
+    player = Player(WINDOW_SIZE[0] / 2, WINDOW_SIZE[1] / 2, 55, 55, "The_man.png", 3)
 
+    target = Object(0, 0, 40, 40, pygame.image.load("cursor.png"))
 
-while True:
-    while a < 1:
-        player.x = player.x = WINDOW_SIZE[0] / 2 - 25
-        player.y = WINDOW_SIZE[1]
-        a += 1
-    else:
-        while d < 1:
-            closed_door_bottom = Object(WINDOW_SIZE[0] / 2 - 50, WINDOW_SIZE[1] - 125, 100, 100, pygame.image.load("closed_door_bottom.png"))
-            objects.remove(closed_door_bottom)
-            objects.insert(0, closed_door_bottom)
-            nyckel = Object(700, 37, 48, 48, pygame.image.load("key_display.png"))
-            objects.insert(0, nyckel)
-            d += 1
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            exit()
-        elif event.type == pygame.KEYDOWN:
-            check_input(event.key, True)
-        elif event.type == pygame.KEYUP:
-            check_input(event.key, False)
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            shoot()
-    mousePos = pygame.mouse.get_pos()
-    target.x = mousePos[0] - target.width / 2
-    target.y = mousePos[1] - target.height / 2
+    pygame.mouse.set_visible(False)
+    while True:
+        while a < 1:
+            player.x = player.x = WINDOW_SIZE[0] / 2 - 25
+            player.y = WINDOW_SIZE[1]
+            a += 1
+        else:
+            while d < 1:
+                closed_door_bottom = Object(WINDOW_SIZE[0] / 2 - 50, WINDOW_SIZE[1] - 125, 100, 100,pygame.image.load("closed_door_bottom.png"))
+                objects.remove(closed_door_bottom)
+                objects.insert(0, closed_door_bottom)
+                nyckel = Object(700, 37, 48, 48, pygame.image.load("key_display.png"))
+                objects.insert(0, nyckel)
+                d += 1
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                exit()
+            elif event.type == pygame.KEYDOWN:
+                check_input(event.key, True)
+            elif event.type == pygame.KEYUP:
+                check_input(event.key, False)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                shoot()
+        mousePos = pygame.mouse.get_pos()
+        target.x = mousePos[0] - target.width / 2
+        target.y = mousePos[1] - target.height / 2
 
-    player.velocity[0] = player_input["right"] - player_input["left"]
-    player.velocity[1] = player_input["down"] - player_input["up"]
+        player.velocity[0] = player_input["right"] - player_input["left"]
+        player.velocity[1] = player_input["down"] - player_input["up"]
 
-    WINDOW.blit(background, WINDOW_CENTER)
+        WINDOW.blit(background, WINDOW_CENTER)
 
-    if is_game_over:
-        pygame.mouse.set_visible(True)
-        update_screen()
-        continue
-
-    open, open_door, closed_door, antal_dorrar = locked_door(open, open_door, closed_door, antal_dorrar)
-
-    display_ui()
-
-    if player.health <= 0:
-        if not is_game_over:
-            is_game_over = True
-
-
-
-    for obj in objects:
-        obj.update()
-
-    for b in bullets:
-        if BOUNDS_X[0] <= b.x <= BOUNDS_X[1] and BOUNDS_Y[0] <= b.y <= BOUNDS_Y[1]:
+        if is_game_over:
+            pygame.mouse.set_visible(True)
+            update_screen()
             continue
-        bullets.remove(b)
-        objects.remove(b)
 
-    for e in enemies:
-        if check_collisions(player, e):
-            player.health -= 1
-            e.destroy()
-            continue
+        open, open_door, closed_door, antal_dorrar = locked_door(open, open_door, closed_door, antal_dorrar)
+
+        display_ui()
+
+        if player.health <= 0:
+            if not is_game_over:
+                is_game_over = True
+
+        for obj in objects:
+            obj.update()
+
         for b in bullets:
-            if check_collisions(b, e):
-                e.take_damage(damage, antal_nycklar)
-                if vapen != "AWP":
-                    bullets.remove(b)
-                    objects.remove(b)
+            if BOUNDS_X[0] <= b.x <= BOUNDS_X[1] and BOUNDS_Y[0] <= b.y <= BOUNDS_Y[1]:
+                continue
+            bullets.remove(b)
+            objects.remove(b)
 
+        for e in enemies:
+            if check_collisions(player, e):
+                player.health -= 1
+                e.destroy()
+                continue
+            for b in bullets:
+                if check_collisions(b, e):
+                    e.take_damage(damage, antal_nycklar)
+                    if vapen != "AWP":
+                        bullets.remove(b)
+                        objects.remove(b)
 
-    if len(enemies) != 0:
-        open = True
-    elif len(enemies) == 0:
-        open = False
+        if len(enemies) != 0:
+            open = True
+        elif len(enemies) == 0:
+            open = False
 
-    if KeyXposs != 0 and KeyYposs != 0 and keys_on_screen != 0:
-        if player.x in range(int(KeyXposs - 70), int(KeyXposs + 70)) and player.y in range(int(KeyYposs - 70), int(KeyYposs + 70)):
-            print("Du har rört en nyckel!")
-            antal_nycklar += 1
-            objects.remove(Key)
-            keys_on_screen -= 1
-
-
-    if hearts_on_screen != 0:
-        if HeartXposs1 != 0 and HeartYposs1 != 0:
-            if player.x in range(int(HeartXposs1 - 70), int(HeartXposs1 + 70)) and player.y in range(
-                    int(HeartYposs1 - 70), int(HeartYposs1 + 70)) and player.health != 5 and Heart1 in objects:
-                print("Du har rört ett hjärta!")
-                objects.remove(Heart1)
-                hearts_on_screen -= 1
-                player.health += 1
-
-        if HeartXposs2 != 0 and HeartYposs2 != 0:
-            if player.x in range(int(HeartXposs2 - 70), int(HeartXposs2 + 70)) and player.y in range(
-                    int(HeartYposs2 - 70), int(HeartYposs2 + 70)) and player.health != 5 and Heart2 in objects:
-                print("Du har rört ett hjärta!")
-                objects.remove(Heart2)
-                hearts_on_screen -= 1
-                player.health += 1
-
-        if HeartXposs3 != 0 and HeartYposs3 != 0:
-            if player.x in range(int(HeartXposs3 - 70), int(HeartXposs3 + 70)) and player.y in range(
-                    int(HeartYposs3 - 70), int(HeartYposs3 + 70)) and player.health != 5 and Heart3 in objects:
-                print("Du har rört ett hjärta!")
-                objects.remove(Heart3)
-                hearts_on_screen -= 1
-                player.health += 1
-
-        if HeartXposs4 != 0 and HeartYposs4 != 0:
-            if player.x in range(int(HeartXposs4 - 70), int(HeartXposs4 + 70)) and player.y in range(
-                    int(HeartYposs4 - 70), int(HeartYposs4 + 70)) and player.health != 5 and Heart4 in objects:
-                print("Du har rört ett härta!")
-                objects.remove(Heart4)
-                hearts_on_screen -= 1
-                player.health += 1
-
-        if HeartXposs5 != 0 and HeartYposs5 != 0:
-            if player.x in range(int(HeartXposs5 - 70), int(HeartXposs5 + 70)) and player.y in range(
-                    int(HeartYposs5 - 70), int(HeartYposs5 + 70)) and player.health != 5 and Heart5 in objects:
-                print("Du har rört ett härta!")
-                objects.remove(Heart5)
-                hearts_on_screen -= 1
-                player.health += 1
-
-    if coins_on_screen != 0:
-        if CoinXposs1 != 0 and CoinYposs1 != 0:
-            if player.x in range(int(CoinXposs1 - 70), int(CoinXposs1 + 70)) and player.y in range(
-                    int(CoinYposs1 - 70), int(CoinYposs1 + 70)) and Coin1 in objects:
-                print("Du har rört ett coin!")
-                objects.remove(Coin1)
-                coins_on_screen -= 1
-                t = random.randint(1, 3)
-                antal_coins += t
-
-        if CoinXposs2 != 0 and CoinYposs2 != 0:
-            if player.x in range(int(CoinXposs2 - 70), int(CoinXposs2 + 70)) and player.y in range(
-                    int(CoinYposs2 - 70), int(CoinYposs2 + 70)) and Coin2 in objects:
-                print("Du har rört ett coin!")
-                objects.remove(Coin2)
-                coins_on_screen -= 1
-                t = random.randint(1, 3)
-                antal_coins += t
-
-        if CoinXposs3 != 0 and CoinYposs3 != 0:
-            if player.x in range(int(CoinXposs3 - 70), int(CoinXposs3 + 70)) and player.y in range(
-                    int(CoinYposs3 - 70), int(CoinYposs3 + 70)) and Coin3 in objects:
-                print("Du har rört ett coin!")
-                objects.remove(Coin3)
-                coins_on_screen -= 1
-                t = random.randint(1, 3)
-                antal_coins += t
-
-        if CoinXposs4 != 0 and CoinYposs4 != 0:
-            if player.x in range(int(CoinXposs4 - 70), int(CoinXposs4 + 70)) and player.y in range(
-                    int(CoinYposs4 - 70), int(CoinYposs4 + 70)) and Coin4 in objects:
-                print("Du har rört ett coin!")
-                objects.remove(Coin4)
-                coins_on_screen -= 1
-                t = random.randint(1, 3)
-                antal_coins += t
-
-        if CoinXposs5 != 0 and CoinYposs5 != 0:
-            if player.x in range(int(CoinXposs5 - 70), int(CoinXposs5 + 70)) and player.y in range(
-                    int(CoinYposs5 - 70), int(CoinYposs5 + 70)) and Coin5 in objects:
-                print("Du har rört ett coin!")
-                objects.remove(Coin5)
-                coins_on_screen -= 1
-                t = random.randint(1, 3)
-                antal_coins += t
-
-        if CoinXposs6 != 0 and CoinYposs6 != 0:
-            if player.x in range(int(CoinXposs6 - 70), int(CoinXposs6 + 70)) and player.y in range(
-                    int(CoinYposs6 - 70), int(CoinYposs6 + 70)) and Coin6 in objects:
-                print("Du har rört ett coin!")
-                objects.remove(Coin6)
-                coins_on_screen -= 1
-                t = random.randint(1, 3)
-                antal_coins += t
-
-        if CoinXposs7 != 0 and CoinYposs7 != 0:
-            if player.x in range(int(CoinXposs7 - 70), int(CoinXposs7 + 70)) and player.y in range(
-                    int(CoinYposs7 - 70), int(CoinYposs7 + 70)) and Coin7 in objects:
-                print("Du har rört ett coin!")
-                objects.remove(Coin7)
-                coins_on_screen -= 1
-                t = random.randint(1, 3)
-                antal_coins += t
-
-        if CoinXposs8 != 0 and CoinYposs8 != 0:
-            if player.x in range(int(CoinXposs8 - 70), int(CoinXposs8 + 70)) and player.y in range(
-                    int(CoinYposs8 - 70), int(CoinYposs8 + 70)) and Coin8 in objects:
-                print("Du har rört ett coin!")
-                objects.remove(Coin8)
-                coins_on_screen -= 1
-                t = random.randint(1, 3)
-                antal_coins += t
-
-        if CoinXposs9 != 0 and CoinYposs9 != 0:
-            if player.x in range(int(CoinXposs9 - 70), int(CoinXposs9 + 70)) and player.y in range(
-                    int(CoinYposs9 - 70), int(CoinYposs9 + 70)) and Coin9 in objects:
-                print("Du har rört ett coin!")
-                objects.remove(Coin9)
-                coins_on_screen -= 1
-                t = random.randint(1, 3)
-                antal_coins += t
-
-        if CoinXposs10 != 0 and CoinYposs10 != 0:
-            if player.x in range(int(CoinXposs10 - 70), int(CoinXposs10 + 70)) and player.y in range(
-                    int(CoinYposs10 - 70), int(CoinYposs10 + 70)) and Coin10 in objects:
-                print("Du har rört ett coin!")
-                objects.remove(Coin10)
-                coins_on_screen -= 1
-                t = random.randint(1, 3)
-                antal_coins += t
-
-
-
-    if player.x in range(int(WINDOW_SIZE[0] / 2 - 70), int(WINDOW_SIZE[0] / 2 + 15)) and player.y in range(17, 84):
-        if len(enemies) == 0:
-            room_counter += 1
-            if keys_on_screen != 0:
+        if KeyXposs != 0 and KeyYposs != 0 and keys_on_screen != 0:
+            if player.x in range(int(KeyXposs - 70), int(KeyXposs + 70)) and player.y in range(int(KeyYposs - 70),
+                                                                                               int(KeyYposs + 70)):
+                print("Du har rört en nyckel!")
+                antal_nycklar += 1
                 objects.remove(Key)
                 keys_on_screen -= 1
-            if hearts_on_screen != 0:
-                if HeartXposs1 != 0 and HeartYposs1 != 0 and Heart1 in objects:
-                    objects.remove(Heart1)
-                if HeartXposs2 != 0 and HeartYposs2 != 0 and Heart2 in objects:
-                    objects.remove(Heart2)
-                if HeartXposs3 != 0 and HeartYposs3 != 0 and Heart3 in objects:
-                    objects.remove(Heart3)
-                if HeartXposs4 != 0 and HeartYposs4 != 0 and Heart4 in objects:
-                    objects.remove(Heart4)
-                if HeartXposs5 != 0 and HeartYposs5 != 0 and Heart5 in objects:
-                    objects.remove(Heart5)
 
-            if coins_on_screen != 0:
-                if CoinXposs1 != 0 and CoinYposs1 != 0 and Coin1 in objects:
-                    CoinXposs1 = 0
-                    CoinYposs1 = 0
+        if hearts_on_screen != 0:
+            if HeartXposs1 != 0 and HeartYposs1 != 0:
+                if player.x in range(int(HeartXposs1 - 70), int(HeartXposs1 + 70)) and player.y in range(
+                        int(HeartYposs1 - 70), int(HeartYposs1 + 70)) and player.health != 5 and Heart1 in objects:
+                    print("Du har rört ett hjärta!")
+                    objects.remove(Heart1)
+                    hearts_on_screen -= 1
+                    player.health += 1
+
+            if HeartXposs2 != 0 and HeartYposs2 != 0:
+                if player.x in range(int(HeartXposs2 - 70), int(HeartXposs2 + 70)) and player.y in range(
+                        int(HeartYposs2 - 70), int(HeartYposs2 + 70)) and player.health != 5 and Heart2 in objects:
+                    print("Du har rört ett hjärta!")
+                    objects.remove(Heart2)
+                    hearts_on_screen -= 1
+                    player.health += 1
+
+            if HeartXposs3 != 0 and HeartYposs3 != 0:
+                if player.x in range(int(HeartXposs3 - 70), int(HeartXposs3 + 70)) and player.y in range(
+                        int(HeartYposs3 - 70), int(HeartYposs3 + 70)) and player.health != 5 and Heart3 in objects:
+                    print("Du har rört ett hjärta!")
+                    objects.remove(Heart3)
+                    hearts_on_screen -= 1
+                    player.health += 1
+
+            if HeartXposs4 != 0 and HeartYposs4 != 0:
+                if player.x in range(int(HeartXposs4 - 70), int(HeartXposs4 + 70)) and player.y in range(
+                        int(HeartYposs4 - 70), int(HeartYposs4 + 70)) and player.health != 5 and Heart4 in objects:
+                    print("Du har rört ett härta!")
+                    objects.remove(Heart4)
+                    hearts_on_screen -= 1
+                    player.health += 1
+
+            if HeartXposs5 != 0 and HeartYposs5 != 0:
+                if player.x in range(int(HeartXposs5 - 70), int(HeartXposs5 + 70)) and player.y in range(
+                        int(HeartYposs5 - 70), int(HeartYposs5 + 70)) and player.health != 5 and Heart5 in objects:
+                    print("Du har rört ett härta!")
+                    objects.remove(Heart5)
+                    hearts_on_screen -= 1
+                    player.health += 1
+
+        if coins_on_screen != 0:
+            if CoinXposs1 != 0 and CoinYposs1 != 0:
+                if player.x in range(int(CoinXposs1 - 70), int(CoinXposs1 + 70)) and player.y in range(
+                        int(CoinYposs1 - 70), int(CoinYposs1 + 70)) and Coin1 in objects:
+                    print("Du har rört ett coin!")
                     objects.remove(Coin1)
                     coins_on_screen -= 1
-                if CoinXposs2 != 0 and CoinYposs2 != 0 and Coin2 in objects:
-                    CoinXposs2 = 0
-                    CoinYposs2 = 0
+                    t = random.randint(1, 3)
+                    antal_coins += t
+
+            if CoinXposs2 != 0 and CoinYposs2 != 0:
+                if player.x in range(int(CoinXposs2 - 70), int(CoinXposs2 + 70)) and player.y in range(
+                        int(CoinYposs2 - 70), int(CoinYposs2 + 70)) and Coin2 in objects:
+                    print("Du har rört ett coin!")
                     objects.remove(Coin2)
                     coins_on_screen -= 1
-                if CoinXposs3 != 0 and CoinYposs3 != 0 and Coin3 in objects:
-                    CoinXposs3 = 0
-                    CoinYposs3 = 0
+                    t = random.randint(1, 3)
+                    antal_coins += t
+
+            if CoinXposs3 != 0 and CoinYposs3 != 0:
+                if player.x in range(int(CoinXposs3 - 70), int(CoinXposs3 + 70)) and player.y in range(
+                        int(CoinYposs3 - 70), int(CoinYposs3 + 70)) and Coin3 in objects:
+                    print("Du har rört ett coin!")
                     objects.remove(Coin3)
                     coins_on_screen -= 1
-                if CoinXposs4 != 0 and CoinYposs4 != 0 and Coin4 in objects:
-                    CoinXposs4 = 0
-                    CoinYposs4 = 0
+                    t = random.randint(1, 3)
+                    antal_coins += t
+
+            if CoinXposs4 != 0 and CoinYposs4 != 0:
+                if player.x in range(int(CoinXposs4 - 70), int(CoinXposs4 + 70)) and player.y in range(
+                        int(CoinYposs4 - 70), int(CoinYposs4 + 70)) and Coin4 in objects:
+                    print("Du har rört ett coin!")
                     objects.remove(Coin4)
                     coins_on_screen -= 1
-                if CoinXposs5 != 0 and CoinYposs5 != 0 and Coin5 in objects:
-                    CoinXposs5 = 0
-                    CoinYposs5 = 0
+                    t = random.randint(1, 3)
+                    antal_coins += t
+
+            if CoinXposs5 != 0 and CoinYposs5 != 0:
+                if player.x in range(int(CoinXposs5 - 70), int(CoinXposs5 + 70)) and player.y in range(
+                        int(CoinYposs5 - 70), int(CoinYposs5 + 70)) and Coin5 in objects:
+                    print("Du har rört ett coin!")
                     objects.remove(Coin5)
                     coins_on_screen -= 1
-                if CoinXposs6 != 0 and CoinYposs6 != 0 and Coin6 in objects:
-                    CoinXposs6 = 0
-                    CoinYposs6 = 0
+                    t = random.randint(1, 3)
+                    antal_coins += t
+
+            if CoinXposs6 != 0 and CoinYposs6 != 0:
+                if player.x in range(int(CoinXposs6 - 70), int(CoinXposs6 + 70)) and player.y in range(
+                        int(CoinYposs6 - 70), int(CoinYposs6 + 70)) and Coin6 in objects:
+                    print("Du har rört ett coin!")
                     objects.remove(Coin6)
                     coins_on_screen -= 1
-                if CoinXposs7 != 0 and CoinYposs7 != 0 and Coin7 in objects:
-                    CoinXposs7 = 0
-                    CoinYposs7 = 0
+                    t = random.randint(1, 3)
+                    antal_coins += t
+
+            if CoinXposs7 != 0 and CoinYposs7 != 0:
+                if player.x in range(int(CoinXposs7 - 70), int(CoinXposs7 + 70)) and player.y in range(
+                        int(CoinYposs7 - 70), int(CoinYposs7 + 70)) and Coin7 in objects:
+                    print("Du har rört ett coin!")
                     objects.remove(Coin7)
                     coins_on_screen -= 1
-                if CoinXposs8 != 0 and CoinYposs8 != 0 and Coin8 in objects:
-                    CoinXposs8 = 0
-                    CoinYposs8 = 0
+                    t = random.randint(1, 3)
+                    antal_coins += t
+
+            if CoinXposs8 != 0 and CoinYposs8 != 0:
+                if player.x in range(int(CoinXposs8 - 70), int(CoinXposs8 + 70)) and player.y in range(
+                        int(CoinYposs8 - 70), int(CoinYposs8 + 70)) and Coin8 in objects:
+                    print("Du har rört ett coin!")
                     objects.remove(Coin8)
                     coins_on_screen -= 1
-                if CoinXposs9 != 0 and CoinYposs9 != 0 and Coin9 in objects:
-                    CoinXposs9 = 0
-                    CoinYposs9 = 0
+                    t = random.randint(1, 3)
+                    antal_coins += t
+
+            if CoinXposs9 != 0 and CoinYposs9 != 0:
+                if player.x in range(int(CoinXposs9 - 70), int(CoinXposs9 + 70)) and player.y in range(
+                        int(CoinYposs9 - 70), int(CoinYposs9 + 70)) and Coin9 in objects:
+                    print("Du har rört ett coin!")
                     objects.remove(Coin9)
                     coins_on_screen -= 1
-                if CoinXposs10 != 0 and CoinYposs10 != 0 and Coin10 in objects:
-                    CoinXposs10 = 0
-                    CoinYposs10 = 0
+                    t = random.randint(1, 3)
+                    antal_coins += t
+
+            if CoinXposs10 != 0 and CoinYposs10 != 0:
+                if player.x in range(int(CoinXposs10 - 70), int(CoinXposs10 + 70)) and player.y in range(
+                        int(CoinYposs10 - 70), int(CoinYposs10 + 70)) and Coin10 in objects:
+                    print("Du har rört ett coin!")
                     objects.remove(Coin10)
                     coins_on_screen -= 1
+                    t = random.randint(1, 3)
+                    antal_coins += t
 
-            player.x = WINDOW_SIZE[0] / 2 - 25
-            player.y = WINDOW_SIZE[1]
-            enemy_spawner1()
-            antal_oppnade_kistor_denna_runda = 0
-            hearts_on_screen = 0
-            coins_on_screen = 0
+        if player.x in range(int(WINDOW_SIZE[0] / 2 - 70), int(WINDOW_SIZE[0] / 2 + 15)) and player.y in range(17, 84):
+            if len(enemies) == 0:
+                room_counter += 1
+                if keys_on_screen != 0:
+                    objects.remove(Key)
+                    keys_on_screen -= 1
+                if hearts_on_screen != 0:
+                    if HeartXposs1 != 0 and HeartYposs1 != 0 and Heart1 in objects:
+                        objects.remove(Heart1)
+                    if HeartXposs2 != 0 and HeartYposs2 != 0 and Heart2 in objects:
+                        objects.remove(Heart2)
+                    if HeartXposs3 != 0 and HeartYposs3 != 0 and Heart3 in objects:
+                        objects.remove(Heart3)
+                    if HeartXposs4 != 0 and HeartYposs4 != 0 and Heart4 in objects:
+                        objects.remove(Heart4)
+                    if HeartXposs5 != 0 and HeartYposs5 != 0 and Heart5 in objects:
+                        objects.remove(Heart5)
 
-    if player.x in range(int(ak47Xposs - 35), int(ak47Xposs + 35)) and player.y in range(int(ak47Yposs - 35), int(ak47Yposs + 35)) and ak47 in objects and pickup_weapon == True:
-        objects.remove(ak47)
-        ak47def()
-        print("du har rört en ak47")
-        pickup_weapon = False
-        weapons_on_ground.remove("ak47")
-        ak47Xposs = 0
-        ak47Yposs = 0
+                if coins_on_screen != 0:
+                    if CoinXposs1 != 0 and CoinYposs1 != 0 and Coin1 in objects:
+                        CoinXposs1 = 0
+                        CoinYposs1 = 0
+                        objects.remove(Coin1)
+                        coins_on_screen -= 1
+                    if CoinXposs2 != 0 and CoinYposs2 != 0 and Coin2 in objects:
+                        CoinXposs2 = 0
+                        CoinYposs2 = 0
+                        objects.remove(Coin2)
+                        coins_on_screen -= 1
+                    if CoinXposs3 != 0 and CoinYposs3 != 0 and Coin3 in objects:
+                        CoinXposs3 = 0
+                        CoinYposs3 = 0
+                        objects.remove(Coin3)
+                        coins_on_screen -= 1
+                    if CoinXposs4 != 0 and CoinYposs4 != 0 and Coin4 in objects:
+                        CoinXposs4 = 0
+                        CoinYposs4 = 0
+                        objects.remove(Coin4)
+                        coins_on_screen -= 1
+                    if CoinXposs5 != 0 and CoinYposs5 != 0 and Coin5 in objects:
+                        CoinXposs5 = 0
+                        CoinYposs5 = 0
+                        objects.remove(Coin5)
+                        coins_on_screen -= 1
+                    if CoinXposs6 != 0 and CoinYposs6 != 0 and Coin6 in objects:
+                        CoinXposs6 = 0
+                        CoinYposs6 = 0
+                        objects.remove(Coin6)
+                        coins_on_screen -= 1
+                    if CoinXposs7 != 0 and CoinYposs7 != 0 and Coin7 in objects:
+                        CoinXposs7 = 0
+                        CoinYposs7 = 0
+                        objects.remove(Coin7)
+                        coins_on_screen -= 1
+                    if CoinXposs8 != 0 and CoinYposs8 != 0 and Coin8 in objects:
+                        CoinXposs8 = 0
+                        CoinYposs8 = 0
+                        objects.remove(Coin8)
+                        coins_on_screen -= 1
+                    if CoinXposs9 != 0 and CoinYposs9 != 0 and Coin9 in objects:
+                        CoinXposs9 = 0
+                        CoinYposs9 = 0
+                        objects.remove(Coin9)
+                        coins_on_screen -= 1
+                    if CoinXposs10 != 0 and CoinYposs10 != 0 and Coin10 in objects:
+                        CoinXposs10 = 0
+                        CoinYposs10 = 0
+                        objects.remove(Coin10)
+                        coins_on_screen -= 1
 
-    if player.x in range(int(AWPXposs - 35), int(AWPXposs + 35)) and player.y in range(int(AWPYposs - 35), int(AWPYposs + 35)) and "AWP" in weapons_on_ground and pickup_weapon == True:
-        objects.remove(AWP)
-        AWPdef()
-        print("du har rört en AWP")
-        pickup_weapon = False
-        weapons_on_ground.remove("AWP")
-        AWPXposs = 0
-        AWPYposs = 0
+                player.x = WINDOW_SIZE[0] / 2 - 25
+                player.y = WINDOW_SIZE[1]
+                enemy_spawner1()
+                antal_oppnade_kistor_denna_runda = 0
+                hearts_on_screen = 0
+                coins_on_screen = 0
 
-    openK, open_chest, closed_chest, antal_kistor = locked_chest(openK, open_chest, closed_chest, antal_kistor, w)
+        if player.x in range(int(ak47Xposs - 35), int(ak47Xposs + 35)) and player.y in range(int(ak47Yposs - 35),
+                                                                                             int(ak47Yposs + 35)) and ak47 in objects and pickup_weapon == True:
+            objects.remove(ak47)
+            ak47def()
+            print("du har rört en ak47")
+            pickup_weapon = False
+            weapons_on_ground.remove("ak47")
+            ak47Xposs = 0
+            ak47Yposs = 0
 
-    if closed_chest != 0:
-        #vänstra sidan stängd kista
-        if player.y < 382 and player.y > 337 and player.x in range(568, 580):
-            player.x = 568
-        #högra sidan stängd kista
-        if player.y < 382 and player.y > 337 and player.x in range(650, 655):
-            player.x = 657
-        #övre sidan stängd kista
-        if player.x < 646 and player.x > 572 and player.y in range(334, 370):
-            player.y = 334
-        #nedre sidan stängd kista
-        if player.x < 646 and player.x > 572 and player.y in range(380, 385):
-            player.y = 385
-    if open_chest != 0:
-        #vänstra sidan öppen ksta
-        if player.y < 382 and player.y > 325 and player.x in range(568, 580):
-            player.x = 568
-        #högra sidan öppen kista
-        if player.y < 382 and player.y > 325 and player.x in range(650, 655):
-            player.x = 657
-        #övre sidan öppen kista
-        if player.x < 646 and player.x > 572 and player.y in range(325, 330):
-            player.y = 325
-        #nedre sidan öppen kista
-        if player.x < 646 and player.x > 572 and player.y in range(380, 385):
-            player.y = 385
-    update_screen()
+        if player.x in range(int(AWPXposs - 35), int(AWPXposs + 35)) and player.y in range(int(AWPYposs - 35),
+                                                                                           int(AWPYposs + 35)) and "AWP" in weapons_on_ground and pickup_weapon == True:
+            objects.remove(AWP)
+            AWPdef()
+            print("du har rört en AWP")
+            pickup_weapon = False
+            weapons_on_ground.remove("AWP")
+            AWPXposs = 0
+            AWPYposs = 0
+
+        openK, open_chest, closed_chest, antal_kistor = locked_chest(openK, open_chest, closed_chest, antal_kistor, w)
+
+        if closed_chest != 0:
+            # vänstra sidan stängd kista
+            if player.y < 382 and player.y > 337 and player.x in range(568, 580):
+                player.x = 568
+            # högra sidan stängd kista
+            if player.y < 382 and player.y > 337 and player.x in range(650, 655):
+                player.x = 657
+            # övre sidan stängd kista
+            if player.x < 646 and player.x > 572 and player.y in range(334, 370):
+                player.y = 334
+            # nedre sidan stängd kista
+            if player.x < 646 and player.x > 572 and player.y in range(380, 385):
+                player.y = 385
+        if open_chest != 0:
+            # vänstra sidan öppen ksta
+            if player.y < 382 and player.y > 325 and player.x in range(568, 580):
+                player.x = 568
+            # högra sidan öppen kista
+            if player.y < 382 and player.y > 325 and player.x in range(650, 655):
+                player.x = 657
+            # övre sidan öppen kista
+            if player.x < 646 and player.x > 572 and player.y in range(325, 330):
+                player.y = 325
+            # nedre sidan öppen kista
+            if player.x < 646 and player.x > 572 and player.y in range(380, 385):
+                player.y = 385
+        update_screen()
+def home_screen():
+    background = pygame.transform.scale(pygame.image.load("home_screen.jpg"), (1280, 720))
+    start_image = pygame.image.load("start_button.png").convert_alpha()
+    start_button = button(WINDOW[0] / 2, WINDOW[1] / 2, start_image)
+    while True:
+        update_screen()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                exit()
+        WINDOW.blit(background, WINDOW_CENTER)
+        start_button.draw()
+
+
+
+home_screen()
