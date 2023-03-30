@@ -27,7 +27,7 @@ BOUNDS_Y = (80, 585)
 replay = True
 
 damage = 1
-shoot_cooldown = 1
+shoot_cooldown = 0.5
 weapon = "pistol"
 key0 = 0
 antal_oppnade_kistor_denna_runda = 0
@@ -224,7 +224,7 @@ class Enemy(Entity):
         self.width = 0
         self.height = 0
 
-        self.health = 8
+        self.health = 6
         self.collider = [width / 2.5, height / 1.5]
         enemies.append(self)
 
@@ -614,8 +614,8 @@ def ak47def():
     global shoot_cooldown
     global damage
     global weapon
-    shoot_cooldown = 0.2
-    damage = 2
+    shoot_cooldown = 0.075
+    damage = 1
     weapon = "ak47"
 def shoot():
     global last_activation_time
