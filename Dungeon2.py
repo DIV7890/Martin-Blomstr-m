@@ -5,6 +5,7 @@ import math
 # Neigour
 open = False
 openK = False
+pickup_weapon = False
 
 z = 0
 pygame.init()
@@ -46,6 +47,8 @@ HeartXposs5 = 0
 HeartYposs5 = 0
 ak47Xposs = 0
 ak47Yposs = 0
+AWPXposs = 0
+AWPYposs = 0
 Coin1 = 0
 Coin2 = 0
 Coin3 = 0
@@ -79,6 +82,7 @@ CoinYposs10 = 0
 coins_on_screen = 0
 antal_coins = 0
 ak47 = 0
+AWP = 0
 
 room_counter = 15
 antal_kistor = 0
@@ -446,6 +450,9 @@ class doors():
 
 def check_input(key, value):
     global unlock_chest
+    global pickup_weapon
+    global AWPXposs
+    global AWPYposs
     if key == pygame.K_a:
         player_input["left"] = value
     elif key == pygame.K_d:
@@ -462,6 +469,14 @@ def check_input(key, value):
         if antal_oppnade_kistor_denna_runda == 0:
             if player.x in range(int(WINDOW_SIZE[0] / 2 - 100), int(WINDOW_SIZE[0] / 2)) and player.y in range(int(WINDOW_SIZE[1] / 2 - 50),int(WINDOW_SIZE[1] / 2 + 50)) and closed_chest > 0 and antal_nycklar > 0:
                 unlock_chest = True
+    if key == pygame.K_e:
+        if player.x in range(int(AWPXposs - 35), int(AWPXposs + 35)) and player.y in range(int(AWPYposs - 35), int(AWPYposs + 35)):
+            pickup_weapon = True
+        if player.x in range(int(ak47Xposs - 35), int(ak47Xposs + 35)) and player.y in range(int(ak47Yposs - 35), int(ak47Yposs + 35)):
+            pickup_weapon = True
+
+
+
 
 
 def load_tileset(filename, width, height):
@@ -511,6 +526,9 @@ def locked_chest(openK, open_chest, closed_chest, antal_kistor, w):
     global ak47Yposs
     global ak47
     global z
+    global AWPXposs
+    global AWPYposs
+    global AWP
     if math.gcd(15,room_counter) == 15 and len(enemies) == 0 and antal_kistor == 0 and room_counter != 0:
         chest1 = Object(WINDOW_SIZE[0] / 2 - 50, WINDOW_SIZE[1] / 2, 100, 100, pygame.image.load("closed_chest.png"))
         chest_rect = pygame.Rect(chest1.x, chest1.y, chest1.width, chest1.height)
@@ -543,10 +561,17 @@ def locked_chest(openK, open_chest, closed_chest, antal_kistor, w):
                 if "ak47" not in weapons_on_ground:
                     r = random.randint(1, 1)
                     if r == 1:
-                        ak47Xposs = (WINDOW_SIZE[0] / 2 + 20)
-                        ak47Yposs = (WINDOW_SIZE[1] / 2 + 100)
+                        ak47Xposs = (WINDOW_SIZE[0] / 2 + 100)
+                        ak47Yposs = (WINDOW_SIZE[1] / 2)
                         ak47 = Object(ak47Xposs, ak47Yposs, 32, 32, pygame.image.load("ak47.png"))
                         weapons_on_ground.append("ak47")
+                if "AWP" not in weapons_on_ground:
+                    r = random.randint(1, 1)
+                    if r == 1:
+                        AWPXposs = (WINDOW_SIZE[0] / 2 + 20)
+                        AWPYposs = (WINDOW_SIZE[1] / 2 - 50)
+                        AWP = Object(AWPXposs, AWPYposs, 32, 32, pygame.image.load("AWP.png"))
+                        weapons_on_ground.append("AWP")
 
     if math.gcd(15,room_counter) != 15 and room_counter != 0:
         if antal_kistor != 0:
@@ -618,6 +643,14 @@ def ak47def():
     shoot_cooldown = 0.075
     damage = 1
     vapen = "ak47"
+def AWPdef():
+    global vapen
+    global shoot_cooldown
+    global damage
+    global weapon
+    shoot_cooldown = 3
+    damage = 100
+    vapen = "AWP"
 def shoot():
     global last_activation_time
     current_time = time.time()
@@ -962,10 +995,23 @@ while True:
             hearts_on_screen = 0
             coins_on_screen = 0
 
-    if player.x in range(int(ak47Xposs - 70), int(ak47Xposs + 70)) and player.y in range(int(ak47Yposs - 70), int(ak47Yposs + 70)) and ak47 in objects:
+    if player.x in range(int(ak47Xposs - 35), int(ak47Xposs + 35)) and player.y in range(int(ak47Yposs - 35), int(ak47Yposs + 35)) and ak47 in objects and pickup_weapon == True:
         objects.remove(ak47)
         ak47def()
         print("du har rört en ak47")
+        pickup_weapon = False
+        weapons_on_ground.remove("ak47")
+        ak47Xposs = 0
+        ak47Yposs = 0
+
+    if player.x in range(int(AWPXposs - 35), int(AWPXposs + 35)) and player.y in range(int(AWPYposs - 35), int(AWPYposs + 35)) and "AWP" in weapons_on_ground and pickup_weapon == True:
+        objects.remove(AWP)
+        AWPdef()
+        print("du har rört en AWP")
+        pickup_weapon = False
+        weapons_on_ground.remove("AWP")
+        AWPXposs = 0
+        AWPYposs = 0
 
     openK, open_chest, closed_chest, antal_kistor = locked_chest(openK, open_chest, closed_chest, antal_kistor, w)
 
@@ -995,4 +1041,5 @@ while True:
         #nedre sidan öppen kista
         if player.x < 646 and player.x > 572 and player.y in range(380, 385):
             player.y = 385
+    print(pickup_weapon)
     update_screen()
