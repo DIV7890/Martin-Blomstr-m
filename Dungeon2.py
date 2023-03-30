@@ -28,6 +28,7 @@ BOUNDS_X = (35, 1250)
 BOUNDS_Y = (80, 585)
 
 replay = True
+Break = False
 
 player = 0
 target = 0
@@ -136,7 +137,13 @@ class button():
         self.rect.center = (x,y)
 
     def draw(self):
+        global Break
         screen.blit(self.image, self.rect.topleft)
+
+        mpos = pygame.mouse.get_pos()
+
+        if self.rect.collidepoint(mpos):
+            Break = True
 
 class Object:
     def __init__(self, x, y, width, height, image):
@@ -788,6 +795,7 @@ def playing():
     target = Object(0, 0, 40, 40, pygame.image.load("cursor.png"))
 
     pygame.mouse.set_visible(False)
+    print("playing")
     while True:
         while a < 1:
             player.x = player.x = WINDOW_SIZE[0] / 2 - 25
@@ -1075,8 +1083,7 @@ def playing():
                 hearts_on_screen = 0
                 coins_on_screen = 0
 
-        if player.x in range(int(ak47Xposs - 35), int(ak47Xposs + 35)) and player.y in range(int(ak47Yposs - 35),
-                                                                                             int(ak47Yposs + 35)) and ak47 in objects and pickup_weapon == True:
+        if player.x in range(int(ak47Xposs - 35), int(ak47Xposs + 35)) and player.y in range(int(ak47Yposs - 35),int(ak47Yposs + 35)) and ak47 in objects and pickup_weapon == True:
             objects.remove(ak47)
             ak47def()
             print("du har rört en ak47")
@@ -1085,8 +1092,7 @@ def playing():
             ak47Xposs = 0
             ak47Yposs = 0
 
-        if player.x in range(int(AWPXposs - 35), int(AWPXposs + 35)) and player.y in range(int(AWPYposs - 35),
-                                                                                           int(AWPYposs + 35)) and "AWP" in weapons_on_ground and pickup_weapon == True:
+        if player.x in range(int(AWPXposs - 35), int(AWPXposs + 35)) and player.y in range(int(AWPYposs - 35),int(AWPYposs + 35)) and "AWP" in weapons_on_ground and pickup_weapon == True:
             objects.remove(AWP)
             AWPdef()
             print("du har rört en AWP")
@@ -1139,6 +1145,9 @@ def home_screen():
         WINDOW.blit(background, WINDOW_CENTER)
         start_button.draw()
         quit_button.draw()
+
+        if Break == True:
+            break
 
 
 if play != True:
