@@ -7,6 +7,7 @@ open = False
 openK = False
 pickup_weapon = False
 play = False
+clicked = False
 
 z = 0
 pygame.init()
@@ -138,12 +139,21 @@ class button():
 
     def draw(self):
         global Break
-        screen.blit(self.image, self.rect.topleft)
-
+        global clicked
         mpos = pygame.mouse.get_pos()
-
-        if self.rect.collidepoint(mpos):
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONUP:
+                clicked = True
+        screen.blit(self.image, self.rect.topleft)
+        collide = self.rect.collidepoint(mpos)
+        if collide and clicked:
             Break = True
+        else:
+            clicked = False
+
+
+
+
 
 class Object:
     def __init__(self, x, y, width, height, image):
@@ -795,7 +805,6 @@ def playing():
     target = Object(0, 0, 40, 40, pygame.image.load("cursor.png"))
 
     pygame.mouse.set_visible(False)
-    print("playing")
     while True:
         while a < 1:
             player.x = player.x = WINDOW_SIZE[0] / 2 - 25
@@ -1130,18 +1139,24 @@ def playing():
             if player.x < 646 and player.x > 572 and player.y in range(380, 385):
                 player.y = 385
         update_screen()
-        print("playing")
 def home_screen():
+    global Break
     background = pygame.transform.scale(pygame.image.load("home_screen.jpg"), (1280, 720))
     start_image = pygame.image.load("start_button.png").convert_alpha()
     start_button = button(640, 200, start_image, 7)
     quit_image = pygame.image.load("quit_button.png").convert_alpha()
     quit_button = button(640, 400, quit_image, 7)
+    mpos = pygame.mouse.get_pos()
     while True:
         update_screen()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+
+                if start_button.rect.collidepoint(mpos):
+                    print("Break ska vara sant")
+                    Break = True
         WINDOW.blit(background, WINDOW_CENTER)
         start_button.draw()
         quit_button.draw()
