@@ -128,6 +128,7 @@ bullets = []
 enemies = []
 Doors = []
 weapons_on_ground = []
+players = []
 
 class button():
     def __init__(self,x,y,image,scale):
@@ -279,6 +280,9 @@ class Enemy(Entity):
         player_center = player.get_center()
         enemy_center = self.get_center()
 
+        if player.health <= 0:
+            self.health = 0
+
         self.velocity = [player_center[0] - enemy_center[0], player_center[1] - enemy_center[1]]
 
         magnitude = (self.velocity[0] ** 2 + self.velocity[1] ** 2) ** 0.5
@@ -299,7 +303,7 @@ class Enemy(Entity):
 
     def take_damage(self, damage, antal_nycklar):
         self.health -= damage
-        if self.health <= 0:
+        if self.health <= 0 or player.health <= 0:
             self.destroy()
             r = random.randint(1, 100)
             global KeyXposs
@@ -486,13 +490,17 @@ def check_input(key, value):
     global AWPYposs
     global replay
     if key == pygame.K_a:
+        print(key)
         player_input["left"] = value
     elif key == pygame.K_d:
         player_input["right"] = value
+        print(key)
     elif key == pygame.K_w:
         player_input["up"] = value
+        print(key)
     elif key == pygame.K_s:
         player_input["down"] = value
+        print(key)
     elif key == pygame.K_l:
         enemy_spawner1()
     elif key == pygame.K_o:
@@ -533,6 +541,7 @@ def enemy_spawner1():
 
 
 def enemy_spawner():
+    global enemy
     for i in range(0, 1):
         randomx = random.randint(BOUNDS_X[0], BOUNDS_X[1] - 75)
         randomy = random.randint(BOUNDS_Y[0], BOUNDS_Y[1] - 75)
@@ -816,6 +825,9 @@ def playing():
     global KeyYposs
     global w
     global damage
+    global enemy
+    global enemies
+    global objects
     screen.fill((0,0,0))
     pygame.display.update()
     background = pygame.transform.scale(pygame.image.load("background.png"), WINDOW_SIZE)
@@ -1233,11 +1245,13 @@ def playing():
         if player.health <= 0:
             pygame.mouse.set_visible(True)
             run = False
-            if door0 in objects:
-                objects.remove(door0)
-            if door1 in objects:
-                objects.remove(door1)
-            objects.remove(target)
+            enemies = []
+            objects = []
+            check_input(119, False)
+            check_input(97, False)
+            check_input(100, False)
+            check_input(115, False)
+
             update_screen()
             home_screen()
             continue
@@ -1263,11 +1277,9 @@ def home_screen():
         WINDOW.blit(background, WINDOW_CENTER)
         start_button.draw()
         quit_button.draw()
-        print(Break)
         if Break == True:
             replay = True
             Break = False
-            print(Break)
             playing()
             break
 
