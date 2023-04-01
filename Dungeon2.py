@@ -7,6 +7,7 @@ open = False
 openK = False
 pickup_weapon = False
 play = False
+prev_mpos = None
 
 z = 0
 pygame.init()
@@ -27,15 +28,15 @@ screen = pygame.display.set_mode((1280 , 720))
 BOUNDS_X = (35, 1250)
 BOUNDS_Y = (80, 585)
 
-replay = True
+replay = False
 Break = False
 
+prev_mouse_state = pygame.mouse.get_pressed()
 player = 0
 target = 0
 damage = 0.5
 shoot_cooldown = 0.25
 vapen = "pistol"
-key0 = 0
 antal_oppnade_kistor_denna_runda = 0
 unlock_chest = False
 antal_hjartan = 0
@@ -137,13 +138,21 @@ class button():
         self.rect.center = (x,y)
 
     def draw(self):
+        global prev_mouse_state
+        global curr_mouse_state
         global Break
+        global prev_mpos
         screen.blit(self.image, self.rect.topleft)
 
         mpos = pygame.mouse.get_pos()
-
-        if self.rect.collidepoint(mpos):
+        curr_mouse_state = pygame.mouse.get_pressed()
+        if mpos[0] in range(530, 748) and mpos[1] in range(123, 208) and prev_mouse_state[0] and not curr_mouse_state[0]:
             Break = True
+        if  mpos[0] in range(528, 748) and mpos[1] in range(309, 393) and prev_mouse_state[0] and not curr_mouse_state[0]:
+            print("exit pga du klickade på quit knappen")
+            exit()
+
+        prev_mouse_state = curr_mouse_state
 
 class Object:
     def __init__(self, x, y, width, height, image):
@@ -249,7 +258,10 @@ class Enemy(Entity):
         self.width = 0
         self.height = 0
 
-        self.health = 6
+        if player.health <= 0:
+            self.health = 0
+        else:
+            self.health = 6
         self.collider = [width / 2.5, height / 1.5]
         enemies.append(self)
 
@@ -472,6 +484,7 @@ def check_input(key, value):
     global pickup_weapon
     global AWPXposs
     global AWPYposs
+    global replay
     if key == pygame.K_a:
         player_input["left"] = value
     elif key == pygame.K_d:
@@ -493,6 +506,9 @@ def check_input(key, value):
             pickup_weapon = True
         if player.x in range(int(ak47Xposs - 35), int(ak47Xposs + 35)) and player.y in range(int(ak47Yposs - 35), int(ak47Yposs + 35)):
             pickup_weapon = True
+    elif key == pygame.K_p:
+        replay = True
+        print("du klickade p")
 
 
 
@@ -717,9 +733,17 @@ def update_screen():
     CLOCK.tick(FRAME_RATE)
     pygame.display.update()
 def playing():
+    print("du är nu I paying")
+    global s
+    global unlock_chest
+    global number_of_enemys
+    global shoot_cooldown
+    global i
+    global replay
     global a
     global b
     global d
+    global antal_hjartan
     global antal_coins
     global is_game_over
     global open
@@ -788,15 +812,95 @@ def playing():
     global antal_oppnade_kistor_denna_runda
     global player
     global target
-    WINDOW.fill(BLACK)
+    global KeyXposs
+    global KeyYposs
+    global w
+    global damage
+    screen.fill((0,0,0))
+    pygame.display.update()
     background = pygame.transform.scale(pygame.image.load("background.png"), WINDOW_SIZE)
     player = Player(WINDOW_SIZE[0] / 2, WINDOW_SIZE[1] / 2, 55, 55, "The_man.png", 3)
 
     target = Object(0, 0, 40, 40, pygame.image.load("cursor.png"))
 
     pygame.mouse.set_visible(False)
-    print("playing")
-    while True:
+    run = True
+    while run:
+        if replay:
+            damage = 0.5
+            shoot_cooldown = 0.25
+            vapen = "pistol"
+            antal_oppnade_kistor_denna_runda = 0
+            unlock_chest = False
+            antal_hjartan = 0
+            hearts_on_screen = 0
+            HeartXposs1 = 0
+            HeartYposs1 = 0
+            HeartXposs2 = 0
+            HeartYposs2 = 0
+            HeartXposs3 = 0
+            HeartYposs3 = 0
+            HeartXposs4 = 0
+            HeartYposs4 = 0
+            HeartXposs5 = 0
+            HeartYposs5 = 0
+            ak47Xposs = 0
+            ak47Yposs = 0
+            AWPXposs = 0
+            AWPYposs = 0
+            Coin1 = 0
+            Coin2 = 0
+            Coin3 = 0
+            Coin4 = 0
+            Coin5 = 0
+            Coin6 = 0
+            Coin7 = 0
+            Coin8 = 0
+            Coin9 = 0
+            Coin10 = 0
+            CoinXposs1 = 0
+            CoinYposs1 = 0
+            CoinXposs2 = 0
+            CoinYposs2 = 0
+            CoinXposs3 = 0
+            CoinYposs3 = 0
+            CoinXposs4 = 0
+            CoinYposs4 = 0
+            CoinXposs5 = 0
+            CoinYposs5 = 0
+            CoinXposs6 = 0
+            CoinYposs6 = 0
+            CoinXposs7 = 0
+            CoinYposs7 = 0
+            CoinXposs8 = 0
+            CoinYposs8 = 0
+            CoinXposs9 = 0
+            CoinYposs9 = 0
+            CoinXposs10 = 0
+            CoinYposs10 = 0
+            coins_on_screen = 0
+            antal_coins = 0
+            ak47 = 0
+            AWP = 0
+
+            room_counter = 10
+            antal_kistor = 0
+            open_chest = 0
+            closed_chest = 0
+            keys_on_screen = 0
+            KeyXposs = 0
+            KeyYposs = 0
+            antal_nycklar = 1
+            number_of_enemys = 0
+            d = 0
+            a = 0
+            s = 0
+            w = 0
+            i = random.randint(1, 10)
+            antal_dorrar = 0
+            open_door = 0
+            closed_door = 0
+            replay = False
         while a < 1:
             player.x = player.x = WINDOW_SIZE[0] / 2 - 25
             player.y = WINDOW_SIZE[1]
@@ -811,6 +915,7 @@ def playing():
                 d += 1
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                print("planerad exit i play funktionen")
                 exit()
             elif event.type == pygame.KEYDOWN:
                 check_input(event.key, True)
@@ -835,10 +940,6 @@ def playing():
         open, open_door, closed_door, antal_dorrar = locked_door(open, open_door, closed_door, antal_dorrar)
 
         display_ui()
-
-        if player.health <= 0:
-            if not is_game_over:
-                is_game_over = True
 
         for obj in objects:
             obj.update()
@@ -1129,9 +1230,25 @@ def playing():
             # nedre sidan öppen kista
             if player.x < 646 and player.x > 572 and player.y in range(380, 385):
                 player.y = 385
+        if player.health <= 0:
+            pygame.mouse.set_visible(True)
+            run = False
+            if door0 in objects:
+                objects.remove(door0)
+            if door1 in objects:
+                objects.remove(door1)
+            objects.remove(target)
+            update_screen()
+            home_screen()
+            continue
         update_screen()
-        print("playing")
 def home_screen():
+    print("du är nu i home screen")
+    global mpos
+    global Break
+    global replay
+    pygame.mouse.set_visible(True)
+    mpos = pygame.mouse.get_pos()
     background = pygame.transform.scale(pygame.image.load("home_screen.jpg"), (1280, 720))
     start_image = pygame.image.load("start_button.png").convert_alpha()
     start_button = button(640, 200, start_image, 7)
@@ -1141,15 +1258,17 @@ def home_screen():
         update_screen()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                print("planerad exit")
                 exit()
         WINDOW.blit(background, WINDOW_CENTER)
         start_button.draw()
         quit_button.draw()
-
+        print(Break)
         if Break == True:
+            replay = True
+            Break = False
+            print(Break)
+            playing()
             break
 
-
-if play != True:
-    home_screen()
-    playing()
+home_screen()
