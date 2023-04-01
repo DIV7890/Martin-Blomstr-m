@@ -47,6 +47,7 @@ while len(numbers) >= 1:
     svar = input("Skriv: ")
     if str(svar) == lista[selected-1]:
         numbers.remove(selected)
+        print("Du svarade rätt!")
     else:
         antal_fel += 1
         print("Rätt svar var " + lista[selected-1])
