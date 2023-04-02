@@ -411,6 +411,7 @@ def check_input(key, value):
     global AWPXposs
     global AWPYposs
     global replay
+    global rounds_left
     if key == pygame.K_a:
         player_input["left"] = value
     elif key == pygame.K_d:
@@ -435,6 +436,9 @@ def check_input(key, value):
     elif key == pygame.K_p:
         replay = True
         print("du klickade p")
+    elif key == pygame.K_r:
+        rounds_left = 0
+        print("reloading")
 
 
 
