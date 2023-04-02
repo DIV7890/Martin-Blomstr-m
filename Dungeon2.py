@@ -787,6 +787,8 @@ def playing():
     global rounds_left
     global reload_time
     global magazin_size
+    global prev_mouse_state
+    global curr_mouse_state
     screen.fill((0,0,0))
     pygame.display.update()
     background = pygame.transform.scale(pygame.image.load("background.png"), WINDOW_SIZE)
@@ -877,6 +879,7 @@ def playing():
             rounds_left = 10
             reload_time = 3
             magazin_size = 10
+            prev_mouse_state = (False, False, False)
         while a < 1:
             player.x = player.x = WINDOW_SIZE[0] / 2 - 25
             player.y = WINDOW_SIZE[1]
