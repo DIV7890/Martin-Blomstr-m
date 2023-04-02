@@ -31,85 +31,7 @@ BOUNDS_Y = (80, 585)
 replay = False
 Break = False
 
-prev_mouse_state = pygame.mouse.get_pressed()
-player = 0
-target = 0
-damage = 0.5
-shoot_cooldown = 0.25
-vapen = "pistol"
-antal_oppnade_kistor_denna_runda = 0
-unlock_chest = False
-antal_hjartan = 0
-hearts_on_screen = 0
-HeartXposs1 = 0
-HeartYposs1 = 0
-HeartXposs2 = 0
-HeartYposs2 = 0
-HeartXposs3 = 0
-HeartYposs3 = 0
-HeartXposs4 = 0
-HeartYposs4 = 0
-HeartXposs5 = 0
-HeartYposs5 = 0
-ak47Xposs = 0
-ak47Yposs = 0
-AWPXposs = 0
-AWPYposs = 0
-Coin1 = 0
-Coin2 = 0
-Coin3 = 0
-Coin4 = 0
-Coin5 = 0
-Coin6 = 0
-Coin7 = 0
-Coin8 = 0
-Coin9 = 0
-Coin10 = 0
-CoinXposs1 = 0
-CoinYposs1 = 0
-CoinXposs2 = 0
-CoinYposs2 = 0
-CoinXposs3 = 0
-CoinYposs3 = 0
-CoinXposs4 = 0
-CoinYposs4 = 0
-CoinXposs5 = 0
-CoinYposs5 = 0
-CoinXposs6 = 0
-CoinYposs6 = 0
-CoinXposs7 = 0
-CoinYposs7 = 0
-CoinXposs8 = 0
-CoinYposs8 = 0
-CoinXposs9 = 0
-CoinYposs9 = 0
-CoinXposs10 = 0
-CoinYposs10 = 0
-coins_on_screen = 0
-antal_coins = 0
-ak47 = 0
-AWP = 0
 
-room_counter = 10
-antal_kistor = 0
-open_chest = 0
-closed_chest = 0
-keys_on_screen = 0
-KeyXposs = 0
-KeyYposs = 0
-antal_nycklar = 1
-number_of_enemys = 0
-last_activation_time = 0
-d = 0
-a = 0
-s = 0
-w = 0
-i = random.randint(1, 10)
-antal_dorrar = 0
-open_door = 0
-closed_door = 0
-door1 = 0
-door0 = 0
 HORIZONTAL = 1
 UP = 2
 DOWN = 0
@@ -262,7 +184,7 @@ class Enemy(Entity):
         if player.health <= 0:
             self.health = 0
         else:
-            self.health = 6
+            self.health = 3
         self.collider = [width / 2.5, height / 1.5]
         enemies.append(self)
 
@@ -490,17 +412,13 @@ def check_input(key, value):
     global AWPYposs
     global replay
     if key == pygame.K_a:
-        print(key)
         player_input["left"] = value
     elif key == pygame.K_d:
         player_input["right"] = value
-        print(key)
     elif key == pygame.K_w:
         player_input["up"] = value
-        print(key)
     elif key == pygame.K_s:
         player_input["down"] = value
-        print(key)
     elif key == pygame.K_l:
         enemy_spawner1()
     elif key == pygame.K_o:
@@ -630,9 +548,11 @@ def locked_chest(openK, open_chest, closed_chest, antal_kistor, w):
                     open_chest -= 1
                     antal_kistor -= 1
         if "ak47" in weapons_on_ground:
+            print("tog bort AKn för att det inte är ett rum med kista längre")
             objects.remove(ak47)
             weapons_on_ground.remove("ak47")
         if "AWP" in weapons_on_ground:
+            print("tog bort AWPn för att det inte är ett rum med kista längre")
             objects.remove(AWP)
             weapons_on_ground.remove("AWP")
 
@@ -680,33 +600,64 @@ def ak47def():
     global shoot_cooldown
     global damage
     global weapon
+    global magazin_size
+    global reload_time
+    global rounds_left
     shoot_cooldown = 0.075
     damage = 1
     vapen = "ak47"
+    magazin_size = 30
+    reload_time = 3
+    rounds_left = 30
 def AWPdef():
+    global rounds_left
+    global reload_time
     global vapen
     global shoot_cooldown
     global damage
     global weapon
+    global magazin_size
     shoot_cooldown = 1.5
     damage = 100
     vapen = "AWP"
+    magazin_size = 10
+    reload_time = 4
+    rounds_left = 10
 def shoot():
     global last_activation_time
+    global current_time1
+    global rounds_fired
+    global magazin_size
+    global reload_time
+    global last_activation_time1
+    global rounds_left
     current_time = time.time()
-    if current_time - last_activation_time >= shoot_cooldown:
-        player_center = player.get_center()
-        bullet = Object(player_center[0], player_center[1], 16, 16, pygame.image.load("bullet.png"))
+    if rounds_left > 0:
+        if current_time - last_activation_time >= shoot_cooldown:
+            player_center = player.get_center()
+            bullet = Object(player_center[0], player_center[1], 16, 16, pygame.image.load("bullet.png"))
 
-        target_center = target.get_center()
-        bullet.velocity = [target_center[0] - player_center[0], target_center[1] - player_center[1]]
+            target_center = target.get_center()
+            bullet.velocity = [target_center[0] - player_center[0], target_center[1] - player_center[1]]
 
-        magnitude = (bullet.velocity[0] ** 2 + bullet.velocity[1] ** 2) ** 0.5
+            magnitude = (bullet.velocity[0] ** 2 + bullet.velocity[1] ** 2) ** 0.5
 
-        bullet.velocity = [bullet.velocity[0] / magnitude * 10, bullet.velocity[1] / magnitude * 10]
+            bullet.velocity = [bullet.velocity[0] / magnitude * 10, bullet.velocity[1] / magnitude * 10]
 
-        bullets.append(bullet)
-        last_activation_time = current_time
+            bullets.append(bullet)
+            last_activation_time = current_time
+            rounds_left -= 1
+            print("rounds left = " + str(rounds_left))
+            last_activation_time1 = time.time()
+    else:
+        current_time1 = time.time()
+        print(current_time1-last_activation_time1)
+        if current_time1 - last_activation_time1 >= reload_time:
+            last_activation_time1 = current_time1
+            rounds_left = magazin_size
+            print("reloading")
+
+
 
 def check_collisions(obj1, obj2):
     x1, y1 = obj1.get_center()
@@ -763,8 +714,10 @@ def playing():
     global coins_on_screen
     global ak47Xposs
     global ak47Yposs
+    global ak47
     global AWPXposs
     global AWPYposs
+    global AWP
     global openK
     global open_chest
     global closed_chest
@@ -828,6 +781,12 @@ def playing():
     global enemy
     global enemies
     global objects
+    global vapen
+    global last_activation_time1
+    global last_activation_time
+    global rounds_left
+    global reload_time
+    global magazin_size
     screen.fill((0,0,0))
     pygame.display.update()
     background = pygame.transform.scale(pygame.image.load("background.png"), WINDOW_SIZE)
@@ -844,6 +803,7 @@ def playing():
             vapen = "pistol"
             antal_oppnade_kistor_denna_runda = 0
             unlock_chest = False
+            pickup_weapon = False
             antal_hjartan = 0
             hearts_on_screen = 0
             HeartXposs1 = 0
@@ -894,8 +854,9 @@ def playing():
             antal_coins = 0
             ak47 = 0
             AWP = 0
-
-            room_counter = 10
+            last_activation_time1 = 0
+            last_activation_time = 0
+            room_counter = 15
             antal_kistor = 0
             open_chest = 0
             closed_chest = 0
@@ -913,6 +874,9 @@ def playing():
             open_door = 0
             closed_door = 0
             replay = False
+            rounds_left = 10
+            reload_time = 3
+            magazin_size = 10
         while a < 1:
             player.x = player.x = WINDOW_SIZE[0] / 2 - 25
             player.y = WINDOW_SIZE[1]
@@ -1195,7 +1159,8 @@ def playing():
                 antal_oppnade_kistor_denna_runda = 0
                 hearts_on_screen = 0
                 coins_on_screen = 0
-
+        if ak47 in objects:
+            print("ak47 finns i objects")
         if player.x in range(int(ak47Xposs - 35), int(ak47Xposs + 35)) and player.y in range(int(ak47Yposs - 35),int(ak47Yposs + 35)) and ak47 in objects and pickup_weapon == True:
             objects.remove(ak47)
             ak47def()
@@ -1205,7 +1170,7 @@ def playing():
             ak47Xposs = 0
             ak47Yposs = 0
 
-        if player.x in range(int(AWPXposs - 35), int(AWPXposs + 35)) and player.y in range(int(AWPYposs - 35),int(AWPYposs + 35)) and "AWP" in weapons_on_ground and pickup_weapon == True:
+        if player.x in range(int(AWPXposs - 35), int(AWPXposs + 35)) and player.y in range(int(AWPYposs - 35),int(AWPYposs + 35)) and AWP in objects and pickup_weapon == True:
             objects.remove(AWP)
             AWPdef()
             print("du har rört en AWP")
