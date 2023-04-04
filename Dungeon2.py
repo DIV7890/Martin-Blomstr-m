@@ -607,6 +607,8 @@ def ak47def():
     global magazin_size
     global reload_time
     global rounds_left
+    global spread
+    spread = 40
     shoot_cooldown = 0.075
     damage = 1
     vapen = "ak47"
@@ -621,7 +623,9 @@ def AWPdef():
     global damage
     global weapon
     global magazin_size
+    global spread
     shoot_cooldown = 1.5
+    spread = 10
     damage = 100
     vapen = "AWP"
     magazin_size = 10
@@ -635,14 +639,16 @@ def shoot():
     global reload_time
     global last_activation_time1
     global rounds_left
+    global spread
     current_time = time.time()
     if rounds_left > 0:
         if current_time - last_activation_time >= shoot_cooldown:
             player_center = player.get_center()
             bullet = Object(player_center[0], player_center[1], 16, 16, pygame.image.load("bullet.png"))
-
             target_center = target.get_center()
-            bullet.velocity = [target_center[0] - player_center[0], target_center[1] - player_center[1]]
+            i = random.uniform(-1 * spread, spread)
+            r = random.uniform(-1 * spread,spread)
+            bullet.velocity = [target_center[0] - player_center[0] + i*(target_center[1]-player_center[1]), target_center[1] - player_center[1] + r*(target_center[0]-player_center[0])]
 
             magnitude = (bullet.velocity[0] ** 2 + bullet.velocity[1] ** 2) ** 0.5
 
@@ -793,6 +799,7 @@ def playing():
     global magazin_size
     global prev_mouse_state
     global curr_mouse_state
+    global spread
     screen.fill((0,0,0))
     pygame.display.update()
     background = pygame.transform.scale(pygame.image.load("background.png"), WINDOW_SIZE)
@@ -883,6 +890,7 @@ def playing():
             rounds_left = 10
             reload_time = 3
             magazin_size = 10
+            spread = 0.1
             prev_mouse_state = (False, False, False)
         while a < 1:
             player.x = player.x = WINDOW_SIZE[0] / 2 - 25
