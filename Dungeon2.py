@@ -607,6 +607,8 @@ def ak47def():
     global magazin_size
     global reload_time
     global rounds_left
+    global spread
+    spread = 0.2
     shoot_cooldown = 0.075
     damage = 1
     vapen = "ak47"
@@ -621,8 +623,10 @@ def AWPdef():
     global damage
     global weapon
     global magazin_size
+    global spread
     shoot_cooldown = 1.5
-    damage = 100
+    spread = 0.01
+    damage = 10
     vapen = "AWP"
     magazin_size = 10
     reload_time = 4
@@ -635,14 +639,16 @@ def shoot():
     global reload_time
     global last_activation_time1
     global rounds_left
+    global spread
     current_time = time.time()
     if rounds_left > 0:
         if current_time - last_activation_time >= shoot_cooldown:
             player_center = player.get_center()
             bullet = Object(player_center[0], player_center[1], 16, 16, pygame.image.load("bullet.png"))
-
             target_center = target.get_center()
-            bullet.velocity = [target_center[0] - player_center[0], target_center[1] - player_center[1]]
+            i = random.uniform(-1 * spread, spread)
+            r = random.uniform(-1 * spread,spread)
+            bullet.velocity = [target_center[0] - player_center[0] + i*(target_center[1]-player_center[1]), target_center[1] - player_center[1] + r*(target_center[0]-player_center[0])]
 
             magnitude = (bullet.velocity[0] ** 2 + bullet.velocity[1] ** 2) ** 0.5
 
@@ -793,6 +799,7 @@ def playing():
     global magazin_size
     global prev_mouse_state
     global curr_mouse_state
+    global spread
     screen.fill((0,0,0))
     pygame.display.update()
     background = pygame.transform.scale(pygame.image.load("background.png"), WINDOW_SIZE)
@@ -883,6 +890,7 @@ def playing():
             rounds_left = 10
             reload_time = 3
             magazin_size = 10
+            spread = 0.25
             prev_mouse_state = (False, False, False)
         while a < 1:
             player.x = player.x = WINDOW_SIZE[0] / 2 - 25
@@ -1225,9 +1233,63 @@ def playing():
             check_input(115, False)
 
             update_screen()
-            home_screen()
+            Play_again()
             continue
         update_screen()
+
+def Play_again():
+    print("du är nu i \"play-again\" screen")
+    global mpos
+    global Break
+    global replay
+    pygame.mouse.set_visible(True)
+    mpos = pygame.mouse.get_pos()
+    background = pygame.transform.scale(pygame.image.load("Background.png"), (1280, 720))
+    replay_image = pygame.image.load("replay_button.png").convert_alpha()
+    replay_button = button(640, 200, replay_image, 7)
+    quit_image = pygame.image.load("quit_button.png").convert_alpha()
+    quit_button = button(640, 400, quit_image, 7)
+    while True:
+        update_screen()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                print("planerad exit")
+                exit()
+        WINDOW.blit(background, WINDOW_CENTER)
+        replay_button.draw()
+        quit_button.draw()
+        if Break == True:
+            replay = True
+            Break = False
+            playing()
+            break
+
+def pause():
+    print("du är nu i \"play-again\" screen")
+    global mpos
+    global Break
+    global replay
+    pygame.mouse.set_visible(True)
+    mpos = pygame.mouse.get_pos()
+    background = pygame.transform.scale(pygame.image.load("Background.png"), (1280, 720))
+    replay_image = pygame.image.load("replay_button.png").convert_alpha()
+    replay_button = button(640, 200, replay_image, 7)
+    quit_image = pygame.image.load("quit_button.png").convert_alpha()
+    quit_button = button(640, 400, quit_image, 7)
+    while True:
+        update_screen()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                print("planerad exit")
+                exit()
+        WINDOW.blit(background, WINDOW_CENTER)
+        replay_button.draw()
+        quit_button.draw()
+        if Break == True:
+            replay = True
+            Break = False
+            playing()
+            break
 def home_screen():
     print("du är nu i home screen")
     global mpos
