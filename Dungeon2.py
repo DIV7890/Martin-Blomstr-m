@@ -444,6 +444,8 @@ def check_input(key, value):
     elif key == pygame.K_r:
         rounds_left = 0
         print("reloading")
+    elif key == pygame.K_k:
+        pause()
 
 
 
@@ -1312,8 +1314,8 @@ def pause():
     pygame.mouse.set_visible(True)
     mpos = pygame.mouse.get_pos()
     background = pygame.transform.scale(pygame.image.load("Background.png"), (1280, 720))
-    replay_image = pygame.image.load("replay_button.png").convert_alpha()
-    replay_button = button(640, 200, replay_image, 7)
+    resume_image = pygame.image.load("resume_button.png").convert_alpha()
+    resume_button = button(640, 200, resume_image, 7)
     quit_image = pygame.image.load("quit_button.png").convert_alpha()
     quit_button = button(640, 400, quit_image, 7)
     while True:
@@ -1323,12 +1325,11 @@ def pause():
                 print("planerad exit")
                 exit()
         WINDOW.blit(background, WINDOW_CENTER)
-        replay_button.draw()
+        resume_button.draw()
         quit_button.draw()
         if Break == True:
-            replay = True
             Break = False
-            playing()
+            pygame.mouse.set_visible(False)
             break
 def home_screen():
     print("du är nu i home screen")
