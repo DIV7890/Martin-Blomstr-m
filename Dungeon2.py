@@ -6,6 +6,7 @@ import math
 open = False
 openK = False
 pickup_weapon = False
+pickup_object = False
 play = False
 prev_mpos = None
 
@@ -50,6 +51,7 @@ bullets = []
 enemies = []
 Doors = []
 weapons_on_ground = []
+objects_on_ground = []
 players = []
 
 class button():
@@ -408,6 +410,7 @@ class doors():
 def check_input(key, value):
     global unlock_chest
     global pickup_weapon
+    global pickup_object
     global AWPXposs
     global AWPYposs
     global replay
@@ -433,6 +436,8 @@ def check_input(key, value):
             pickup_weapon = True
         if player.x in range(int(ak47Xposs - 35), int(ak47Xposs + 35)) and player.y in range(int(ak47Yposs - 35), int(ak47Yposs + 35)):
             pickup_weapon = True
+        if player.x in range(int(ammoXposs - 35), int(ammoXposs + 35)) and player.y in range(int(ammoYposs - 35), int(ammoYposs + 35)):
+            pickup_object = True
     elif key == pygame.K_p:
         replay = True
         print("du klickade p")
@@ -495,6 +500,9 @@ def locked_chest(openK, open_chest, closed_chest, antal_kistor, w):
     global AWPXposs
     global AWPYposs
     global AWP
+    global ammoXposs
+    global ammoYposs
+    global ammo_box
     if math.gcd(15,room_counter) == 15 and len(enemies) == 0 and antal_kistor == 0 and room_counter != 0:
         chest1 = Object(WINDOW_SIZE[0] / 2 - 50, WINDOW_SIZE[1] / 2, 100, 100, pygame.image.load("closed_chest.png"))
         chest_rect = pygame.Rect(chest1.x, chest1.y, chest1.width, chest1.height)
@@ -538,6 +546,13 @@ def locked_chest(openK, open_chest, closed_chest, antal_kistor, w):
                         AWPYposs = (WINDOW_SIZE[1] / 2 - 50)
                         AWP = Object(AWPXposs, AWPYposs, 32, 32, pygame.image.load("AWP.png"))
                         weapons_on_ground.append("AWP")
+                if "Ammo" not in objects_on_ground:
+                    r = random.randint(1, 1)
+                    if r == 1:
+                        ammoXposs = (WINDOW_SIZE[0] / 2 -100)
+                        ammoYposs = (WINDOW_SIZE[1] / 2 - 50)
+                        ammo_box = Object(ammoXposs, ammoYposs, 32, 32, pygame.image.load("ammo_box.png"))
+                        objects_on_ground.append("ammo_box")
 
     if math.gcd(15,room_counter) != 15 and room_counter != 0:
         if antal_kistor != 0:
@@ -559,7 +574,9 @@ def locked_chest(openK, open_chest, closed_chest, antal_kistor, w):
             print("tog bort AWPn för att det inte är ett rum med kista längre")
             objects.remove(AWP)
             weapons_on_ground.remove("AWP")
-
+        if "ammo_box" in objects_on_ground:
+            objects.remove(ammo_box)
+            objects_on_ground.remove("ammo_box")
     return openK, open_chest, closed_chest, antal_kistor
 
 
@@ -631,6 +648,13 @@ def AWPdef():
     magazin_size = 10
     reload_time = 4
     rounds_left = 10
+def Ammodef():
+    global rounds_left
+    global magazin_size
+    if rounds_left != magazin_size:
+        rounds_left = magazin_size
+        print("Du fick ammo")
+
 def shoot():
     global last_activation_time
     global current_time1
@@ -728,6 +752,9 @@ def playing():
     global AWPXposs
     global AWPYposs
     global AWP
+    global ammoXposs
+    global ammoYposs
+    global ammo_box
     global openK
     global open_chest
     global closed_chest
@@ -781,6 +808,7 @@ def playing():
     global Coin9
     global Coin10
     global pickup_weapon
+    global pickup_object
     global antal_oppnade_kistor_denna_runda
     global player
     global target
@@ -817,6 +845,7 @@ def playing():
             antal_oppnade_kistor_denna_runda = 0
             unlock_chest = False
             pickup_weapon = False
+            pickup_object = False
             antal_hjartan = 0
             hearts_on_screen = 0
             HeartXposs1 = 0
@@ -833,6 +862,8 @@ def playing():
             ak47Yposs = 0
             AWPXposs = 0
             AWPYposs = 0
+            ammoXposs = 0
+            ammoYposs = 0
             Coin1 = 0
             Coin2 = 0
             Coin3 = 0
@@ -867,6 +898,7 @@ def playing():
             antal_coins = 0
             ak47 = 0
             AWP = 0
+            ammo_box = 0
             last_activation_time1 = 0
             last_activation_time = 0
             room_counter = 15
@@ -1194,6 +1226,14 @@ def playing():
             AWPXposs = 0
             AWPYposs = 0
 
+        if player.x in range(int(ammoXposs - 35), int(ammoXposs + 35)) and player.y in range(int(ammoYposs - 35),int(ammoYposs + 35)) and ammo_box in objects and pickup_object == True:
+            objects.remove(ammo_box)
+            Ammodef()
+            pickup_object = False
+            objects_on_ground.remove("ammo_box")
+            ammoXposs = 0
+            ammoYposs = 0
+
         openK, open_chest, closed_chest, antal_kistor = locked_chest(openK, open_chest, closed_chest, antal_kistor, w)
 
         if closed_chest != 0:
@@ -1318,3 +1358,4 @@ def home_screen():
             break
 
 home_screen()
+
