@@ -608,7 +608,7 @@ def ak47def():
     global reload_time
     global rounds_left
     global spread
-    spread = 40
+    spread = 0.2
     shoot_cooldown = 0.075
     damage = 1
     vapen = "ak47"
@@ -625,8 +625,8 @@ def AWPdef():
     global magazin_size
     global spread
     shoot_cooldown = 1.5
-    spread = 10
-    damage = 100
+    spread = 0.01
+    damage = 10
     vapen = "AWP"
     magazin_size = 10
     reload_time = 4
@@ -890,7 +890,7 @@ def playing():
             rounds_left = 10
             reload_time = 3
             magazin_size = 10
-            spread = 0.1
+            spread = 0.25
             prev_mouse_state = (False, False, False)
         while a < 1:
             player.x = player.x = WINDOW_SIZE[0] / 2 - 25
@@ -1233,9 +1233,63 @@ def playing():
             check_input(115, False)
 
             update_screen()
-            home_screen()
+            Play_again()
             continue
         update_screen()
+
+def Play_again():
+    print("du är nu i \"play-again\" screen")
+    global mpos
+    global Break
+    global replay
+    pygame.mouse.set_visible(True)
+    mpos = pygame.mouse.get_pos()
+    background = pygame.transform.scale(pygame.image.load("Background.png"), (1280, 720))
+    replay_image = pygame.image.load("replay_button.png").convert_alpha()
+    replay_button = button(640, 200, replay_image, 7)
+    quit_image = pygame.image.load("quit_button.png").convert_alpha()
+    quit_button = button(640, 400, quit_image, 7)
+    while True:
+        update_screen()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                print("planerad exit")
+                exit()
+        WINDOW.blit(background, WINDOW_CENTER)
+        replay_button.draw()
+        quit_button.draw()
+        if Break == True:
+            replay = True
+            Break = False
+            playing()
+            break
+
+def pause():
+    print("du är nu i \"play-again\" screen")
+    global mpos
+    global Break
+    global replay
+    pygame.mouse.set_visible(True)
+    mpos = pygame.mouse.get_pos()
+    background = pygame.transform.scale(pygame.image.load("Background.png"), (1280, 720))
+    replay_image = pygame.image.load("replay_button.png").convert_alpha()
+    replay_button = button(640, 200, replay_image, 7)
+    quit_image = pygame.image.load("quit_button.png").convert_alpha()
+    quit_button = button(640, 400, quit_image, 7)
+    while True:
+        update_screen()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                print("planerad exit")
+                exit()
+        WINDOW.blit(background, WINDOW_CENTER)
+        replay_button.draw()
+        quit_button.draw()
+        if Break == True:
+            replay = True
+            Break = False
+            playing()
+            break
 def home_screen():
     print("du är nu i home screen")
     global mpos
