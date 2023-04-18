@@ -11,7 +11,7 @@ pickup_object = False
 play = False
 prev_mpos = None
 music_playing = True
-
+playlist = ["GD_level1.mp3","GD_level2.mp3"]
 z = 0
 pygame.init()
 
@@ -63,7 +63,6 @@ mixer.init()
 # Load audio file
 mixer.music.load('GD_level1.mp3')
 
-print("music started playing....")
 
 # Set preferred volume
 mixer.music.set_volume(0.2)
@@ -73,6 +72,8 @@ mixer.music.play()
 def play_music(KEY):
     global music_playing
     global key_down
+    global playlist_index
+    global playlist
     key_down += 1
     if key_down == 2:
         key_down = 0
@@ -81,20 +82,22 @@ def play_music(KEY):
             if music_playing == True:
                 # Pause the music
                 mixer.music.pause()
-                print("music is paused....")
                 music_playing = False
             else:
                 # Resume the music
                 mixer.music.unpause()
-                print("music is resumed....")
                 music_playing = True
 
 
 
     elif KEY == pygame.K_n:
-        mixer.music.load('GD_level2.mp3')
-        mixer.music.play()
-        print("played the next song....")
+        if key_down == 1:
+            if playlist_index == len(playlist):
+                playlist_index = 0
+            mixer.music.load(playlist[playlist_index])
+            mixer.music.play()
+            playlist_index += 1
+
 class button():
     def __init__(self,x,y,image,scale):
         width = image.get_width()
@@ -484,7 +487,7 @@ def check_input(key, value):
     elif key == pygame.K_r:
         rounds_left = 0
         print("reloading")
-    elif key == pygame.K_k:
+    elif key == pygame.K_ESCAPE:
         mixer.music.pause()
         pause()
 
@@ -762,8 +765,10 @@ def display_ui():
     keys_displayed = TEXT_FONT.render(f"{antal_nycklar}", True, BLACK)
     WINDOW.blit(keys_displayed, (765, 45))
     next_room = TEXT_FONT.render(f"{room_counter + 1}", True, BLACK)
-    WINDOW.blit(next_room, (WINDOW_SIZE[0] / 2 - 10, 0))
-
+    if room_counter+1 < 10:
+        WINDOW.blit(next_room, (WINDOW_SIZE[0] / 2 - 9, 0))
+    elif room_counter +1 < 100:
+        WINDOW.blit(next_room, (WINDOW_SIZE[0] / 2 - 18, 0))
 
 
 def update_screen():
@@ -872,6 +877,7 @@ def playing():
     global curr_mouse_state
     global spread
     global key_down
+    global playlist_index
     screen.fill((0,0,0))
     pygame.display.update()
     background = pygame.transform.scale(pygame.image.load("background.png"), WINDOW_SIZE)
@@ -969,18 +975,12 @@ def playing():
             spread = 0.25
             prev_mouse_state = (False, False, False)
             key_down = 0
-            # Instantiate mixer
+            playlist_index = 0
+
             mixer.init()
-
-            # Load audio file
-            mixer.music.load('GD_level1.mp3')
-
-            print("music started playing....")
-
-            # Set preferred volume
+            mixer.music.load(playlist[0])
+            playlist_index += 1
             mixer.music.set_volume(0.2)
-
-            # Play the music
             mixer.music.play()
 
         while a < 1:
@@ -1416,7 +1416,3 @@ def home_screen():
             break
 
 home_screen()
-
-
-
-
