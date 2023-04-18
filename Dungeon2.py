@@ -2,6 +2,7 @@ import pygame
 import random
 import time
 import math
+from pygame import mixer
 # Neigour
 open = False
 openK = False
@@ -9,6 +10,7 @@ pickup_weapon = False
 pickup_object = False
 play = False
 prev_mpos = None
+music_playing = True
 
 z = 0
 pygame.init()
@@ -54,6 +56,40 @@ weapons_on_ground = []
 objects_on_ground = []
 players = []
 
+# Instantiate mixer
+mixer.init()
+
+# Load audio file
+mixer.music.load('GD_level1.mp3')
+
+print("music started playing....")
+
+# Set preferred volume
+mixer.music.set_volume(0.2)
+
+# Play the music
+mixer.music.play()
+def play_music(KEY):
+    if KEY == pygame.K_p:
+
+        # Pause the music
+        mixer.music.pause()
+        print("music is paused....")
+    elif KEY == pygame.K_r:
+
+        # Resume the music
+        mixer.music.unpause()
+        print("music is resumed....")
+    elif KEY == pygame.K_m:
+
+        # Stop the music playback
+        mixer.music.stop()
+        print("music is stopped....")
+
+    elif KEY == pygame.K_n:
+        mixer.music.load('GD_level2.mp3')
+        mixer.music.play()
+        print("played the next song....")
 class button():
     def __init__(self,x,y,image,scale):
         width = image.get_width()
@@ -415,6 +451,7 @@ def check_input(key, value):
     global AWPYposs
     global replay
     global rounds_left
+    play_music(key)
     if key == pygame.K_a:
         player_input["left"] = value
     elif key == pygame.K_d:
@@ -438,13 +475,11 @@ def check_input(key, value):
             pickup_weapon = True
         if player.x in range(int(ammoXposs - 35), int(ammoXposs + 35)) and player.y in range(int(ammoYposs - 35), int(ammoYposs + 35)):
             pickup_object = True
-    elif key == pygame.K_p:
-        replay = True
-        print("du klickade p")
     elif key == pygame.K_r:
         rounds_left = 0
         print("reloading")
     elif key == pygame.K_k:
+        mixer.music.pause()
         pause()
 
 
@@ -926,6 +961,7 @@ def playing():
             magazin_size = 10
             spread = 0.25
             prev_mouse_state = (False, False, False)
+
         while a < 1:
             player.x = player.x = WINDOW_SIZE[0] / 2 - 25
             player.y = WINDOW_SIZE[1]
@@ -1359,4 +1395,7 @@ def home_screen():
             break
 
 home_screen()
+
+
+
 
