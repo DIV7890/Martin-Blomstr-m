@@ -31,7 +31,7 @@ screen = pygame.display.set_mode((1280 , 720))
 BOUNDS_X = (35, 1250)
 BOUNDS_Y = (80, 585)
 
-replay = False
+replay = True
 Break = False
 
 
@@ -56,6 +56,7 @@ weapons_on_ground = []
 objects_on_ground = []
 players = []
 
+
 # Instantiate mixer
 mixer.init()
 
@@ -70,21 +71,25 @@ mixer.music.set_volume(0.2)
 # Play the music
 mixer.music.play()
 def play_music(KEY):
+    global music_playing
+    global key_down
+    key_down += 1
+    if key_down == 2:
+        key_down = 0
     if KEY == pygame.K_p:
+        if key_down == 1:
+            if music_playing == True:
+                # Pause the music
+                mixer.music.pause()
+                print("music is paused....")
+                music_playing = False
+            else:
+                # Resume the music
+                mixer.music.unpause()
+                print("music is resumed....")
+                music_playing = True
 
-        # Pause the music
-        mixer.music.pause()
-        print("music is paused....")
-    elif KEY == pygame.K_r:
 
-        # Resume the music
-        mixer.music.unpause()
-        print("music is resumed....")
-    elif KEY == pygame.K_m:
-
-        # Stop the music playback
-        mixer.music.stop()
-        print("music is stopped....")
 
     elif KEY == pygame.K_n:
         mixer.music.load('GD_level2.mp3')
@@ -109,6 +114,7 @@ class button():
         curr_mouse_state = pygame.mouse.get_pressed()
         if mpos[0] in range(530, 748) and mpos[1] in range(123, 208) and prev_mouse_state[0] and not curr_mouse_state[0]:
             Break = True
+            mixer.music.unpause()
         if  mpos[0] in range(528, 748) and mpos[1] in range(309, 393) and prev_mouse_state[0] and not curr_mouse_state[0]:
             print("exit pga du klickade på quit knappen")
             exit()
@@ -865,6 +871,7 @@ def playing():
     global prev_mouse_state
     global curr_mouse_state
     global spread
+    global key_down
     screen.fill((0,0,0))
     pygame.display.update()
     background = pygame.transform.scale(pygame.image.load("background.png"), WINDOW_SIZE)
@@ -961,6 +968,20 @@ def playing():
             magazin_size = 10
             spread = 0.25
             prev_mouse_state = (False, False, False)
+            key_down = 0
+            # Instantiate mixer
+            mixer.init()
+
+            # Load audio file
+            mixer.music.load('GD_level1.mp3')
+
+            print("music started playing....")
+
+            # Set preferred volume
+            mixer.music.set_volume(0.2)
+
+            # Play the music
+            mixer.music.play()
 
         while a < 1:
             player.x = player.x = WINDOW_SIZE[0] / 2 - 25
