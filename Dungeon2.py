@@ -69,6 +69,14 @@ mixer.music.set_volume(0.2)
 
 # Play the music
 mixer.music.play()
+
+def doWork():
+    global loading_finished
+    global loading_progress
+    for i in range(WORK):
+        math_equation = 523687 / 789456 * 89456
+        loading_progress = i
+    loading_finished = True
 def play_music(KEY):
     global music_playing
     global key_down
@@ -208,8 +216,31 @@ class Player(Entity):
         self.health = self.max_health = 5
         self.rect = pygame.Rect(x, y, width, height)
 
+    def handle_weapons(self, display):
+        target.x, target.y = pygame.mouse.get_pos()
+
+        rel_x, rel_y = target.x - player.x, target.y - player.y
+        angle = (180 / math.pi) * -math.atan2(rel_y, rel_x)
+
+        target.x_b, target.y_b = pygame.mouse.get_pos()
+
+        rel_x_b, rel_y_b = target.x_b - player.x, target.y_b - player.y
+        angle_b = (180 / math.pi) * +math.atan2(rel_y_b, rel_x_b)
+
+        Newb_pistol_copy = pygame.transform.rotate(Newb_pistol, angle)
+        Newb_pistol_copy2 = pygame.transform.rotate(Newb_pistol_flip, angle)
+        if rel_x > 0:
+            display.blit(Newb_pistol_copy, (
+                self.x + 35 - int(Newb_pistol_copy.get_width() / 2),
+                self.y + 35 - int(Newb_pistol_copy.get_height() / 2)))
+        else:
+            display.blit(Newb_pistol_copy2, (
+                self.x + 35 - int(Newb_pistol_copy2.get_width() / 2),
+                self.y + 35 - int(Newb_pistol_copy2.get_height() / 2)))
+
     def update(self):
         super().update()
+        self.handle_weapons(WINDOW)
 
         self.x = max(BOUNDS_X[0], min(self.x, BOUNDS_X[1] - self.width))
         self.y = max(BOUNDS_Y[0], min(self.y, BOUNDS_Y[1] - self.height))
@@ -671,6 +702,8 @@ def ak47def():
     global reload_time
     global rounds_left
     global spread
+    global Newb_pistol
+    global Newb_pistol_flip
     spread = 0.2
     shoot_cooldown = 0.075
     damage = 1
@@ -678,6 +711,8 @@ def ak47def():
     magazin_size = 30
     reload_time = 3
     rounds_left = 30
+    Newb_pistol = pygame.image.load("ak47.png").convert_alpha()
+    Newb_pistol_flip = pygame.transform.flip(Newb_pistol, False, True)
 def AWPdef():
     global rounds_left
     global reload_time
@@ -687,6 +722,8 @@ def AWPdef():
     global weapon
     global magazin_size
     global spread
+    global Newb_pistol
+    global Newb_pistol_flip
     shoot_cooldown = 1.5
     spread = 0.01
     damage = 10
@@ -694,6 +731,8 @@ def AWPdef():
     magazin_size = 10
     reload_time = 4
     rounds_left = 10
+    Newb_pistol = pygame.image.load("AWP.png").convert_alpha()
+    Newb_pistol_flip = pygame.transform.flip(Newb_pistol, False, True)
 def Ammodef():
     global rounds_left
     global magazin_size
@@ -710,6 +749,9 @@ def shoot():
     global last_activation_time1
     global rounds_left
     global spread
+    global loading_finished
+    global loading_progress
+    global loading_bar_width
     current_time = time.time()
     if rounds_left > 0:
         if current_time - last_activation_time >= shoot_cooldown:
@@ -732,6 +774,13 @@ def shoot():
     else:
         current_time1 = time.time()
         print(current_time1-last_activation_time1)
+        LOADING_BG = pygame.image.load("Loading Bar Background.png")
+        LOADING_BG_RECT = LOADING_BG.get_rect(center=(640, 360))
+        loading_bar = pygame.image.load("Loading Bar.png")
+        loading_bar_rect = loading_bar.get_rect(midleft=(280, 360))
+        loading_finished = False
+        loading_progress = 0
+        loading_bar_width = 8
         if current_time1 - last_activation_time1 >= reload_time:
             last_activation_time1 = current_time1
             rounds_left = magazin_size
@@ -751,6 +800,7 @@ def check_collisions(obj1, obj2):
 
 def display_ui():
     global antal_nycklar
+    global rounds_left
     for i in range(player.max_health):
         img = pygame.image.load("empty_heart.png" if i >= player.health else "full_heart.png")
         img = pygame.transform.scale(img, (50, 50))
@@ -758,6 +808,9 @@ def display_ui():
 
     keys_displayed = TEXT_FONT.render(f"{antal_nycklar}", True, BLACK)
     WINDOW.blit(keys_displayed, (765, 45))
+
+    rounds_left_displayed = TEXT_FONT.render(f"{rounds_left}", True, WHITE)
+    WINDOW.blit(rounds_left_displayed, (990, 598))
 
     coins_displayed = TEXT_FONT.render(f"{antal_coins}", True, BLACK)
     WINDOW.blit(coins_displayed, (900, 45))
@@ -878,6 +931,12 @@ def playing():
     global spread
     global key_down
     global playlist_index
+    global Newb_pistol
+    global Newb_pistol_flip
+    global WORK
+    global loading_finished
+    global loading_progress
+    global loading_bar_width
     screen.fill((0,0,0))
     pygame.display.update()
     background = pygame.transform.scale(pygame.image.load("background.png"), WINDOW_SIZE)
@@ -976,6 +1035,12 @@ def playing():
             prev_mouse_state = (False, False, False)
             key_down = 0
             playlist_index = 0
+            Newb_pistol = pygame.image.load("Gon.png").convert_alpha()
+            Newb_pistol_flip = pygame.transform.flip(Newb_pistol, False, True)
+            WORK = 10000000
+            loading_finished = False
+            loading_progress = 0
+            loading_bar_width = 8
 
             mixer.init()
             mixer.music.load(playlist[0])
@@ -994,6 +1059,8 @@ def playing():
                 objects.insert(0, closed_door_bottom)
                 nyckel = Object(700, 37, 48, 48, pygame.image.load("key_display.png"))
                 objects.insert(0, nyckel)
+                bullets_display = Object(930, 590, 48, 48, pygame.image.load("bullets_display.png"))
+                objects.insert(0, bullets_display)
                 d += 1
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
