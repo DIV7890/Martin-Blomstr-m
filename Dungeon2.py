@@ -752,6 +752,7 @@ def shoot():
     global loading_finished
     global loading_progress
     global loading_bar_width
+    global total_ammo
     current_time = time.time()
     if rounds_left > 0:
         if current_time - last_activation_time >= shoot_cooldown:
@@ -801,6 +802,10 @@ def check_collisions(obj1, obj2):
 def display_ui():
     global antal_nycklar
     global rounds_left
+    global vapen
+    global total_bullets
+    global infinity_display_exist
+    global infinity_display
     for i in range(player.max_health):
         img = pygame.image.load("empty_heart.png" if i >= player.health else "full_heart.png")
         img = pygame.transform.scale(img, (50, 50))
@@ -818,6 +823,20 @@ def display_ui():
     keys_displayed = TEXT_FONT.render(f"{antal_nycklar}", True, BLACK)
     WINDOW.blit(keys_displayed, (765, 45))
     next_room = TEXT_FONT.render(f"{room_counter + 1}", True, BLACK)
+
+    if vapen != "pistol":
+        total_bullets_display = TEXT_FONT.render(f"{total_ammo}", True, BLACK)
+        WINDOW.blit(total_bullets_display, (470, 597))
+        infinity_display_exist = False
+        if infinity_display in objects:
+            objects.remove(infinity_display)
+
+    else:
+        if infinity_display_exist == False:
+            infinity_display = Object(470, 597, 48, 48, pygame.image.load("infinity.png"))
+            objects.insert(0, infinity_display)
+            infinity_display_exist = True
+
     if room_counter+1 < 10:
         WINDOW.blit(next_room, (WINDOW_SIZE[0] / 2 - 9, 0))
     elif room_counter +1 < 100:
@@ -937,6 +956,9 @@ def playing():
     global loading_finished
     global loading_progress
     global loading_bar_width
+    global total_ammo
+    global infinity_display_exist
+    global infinity_display
     screen.fill((0,0,0))
     pygame.display.update()
     background = pygame.transform.scale(pygame.image.load("background.png"), WINDOW_SIZE)
@@ -1041,12 +1063,15 @@ def playing():
             loading_finished = False
             loading_progress = 0
             loading_bar_width = 8
+            total_ammo = 99999999999999999999999999999999999
 
             mixer.init()
             mixer.music.load(playlist[0])
             playlist_index += 1
             mixer.music.set_volume(0.2)
             mixer.music.play()
+            infinity_display_exist = False
+            infinity_display = 0
 
         while a < 1:
             player.x = player.x = WINDOW_SIZE[0] / 2 - 25
@@ -1059,8 +1084,10 @@ def playing():
                 objects.insert(0, closed_door_bottom)
                 nyckel = Object(700, 37, 48, 48, pygame.image.load("key_display.png"))
                 objects.insert(0, nyckel)
-                bullets_display = Object(930, 590, 48, 48, pygame.image.load("bullets_display.png"))
-                objects.insert(0, bullets_display)
+                magazine_size_display = Object(930, 590, 48, 48, pygame.image.load("magazine_size_display.png"))
+                objects.insert(0, magazine_size_display)
+                total_bullets_display = Object(400, 590, 48, 48, pygame.image.load("total_bullets_display.png"))
+                objects.insert(0, total_bullets_display)
                 d += 1
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -1476,7 +1503,7 @@ def home_screen():
         WINDOW.blit(background, WINDOW_CENTER)
         start_button.draw()
         quit_button.draw()
-        if Break == True:
+        if Break:
             replay = True
             Break = False
             playing()
