@@ -609,14 +609,14 @@ def locked_chest(openK, open_chest, closed_chest, antal_kistor, w):
                     HeartYposs5 = (WINDOW_SIZE[1] / 2 - 100)
                     Heart5 = Object(HeartXposs5, HeartYposs5, 32, 32, pygame.image.load("full_heart.png"))
                     hearts_on_screen += 1
-                if "ak47" not in weapons_on_ground:
+                if "ak47" not in weapons_on_ground and room_counter == 15:
                     r = random.randint(1, 1)
                     if r == 1:
                         ak47Xposs = (WINDOW_SIZE[0] / 2 + 100)
                         ak47Yposs = (WINDOW_SIZE[1] / 2)
                         ak47 = Object(ak47Xposs, ak47Yposs, 32, 32, pygame.image.load("ak47.png"))
                         weapons_on_ground.append("ak47")
-                if "AWP" not in weapons_on_ground:
+                if "AWP" not in weapons_on_ground and room_counter == 30:
                     r = random.randint(1, 1)
                     if r == 1:
                         AWPXposs = (WINDOW_SIZE[0] / 2 + 20)
@@ -791,6 +791,23 @@ def shoot():
             rounds_left = magazin_size
 
             print("reloading")
+            player_center = player.get_center()
+            bullet = Object(player_center[0], player_center[1], 16, 16, pygame.image.load("bullet.png"))
+            target_center = target.get_center()
+            i = random.uniform(-1 * spread, spread)
+            r = random.uniform(-1 * spread, spread)
+            bullet.velocity = [target_center[0] - player_center[0] + i * (target_center[1] - player_center[1]),
+                               target_center[1] - player_center[1] + r * (target_center[0] - player_center[0])]
+
+            magnitude = (bullet.velocity[0] ** 2 + bullet.velocity[1] ** 2) ** 0.5
+
+            bullet.velocity = [bullet.velocity[0] / magnitude * 10, bullet.velocity[1] / magnitude * 10]
+
+            bullets.append(bullet)
+            last_activation_time = current_time
+            rounds_left -= 1
+            print("rounds left = " + str(rounds_left))
+            last_activation_time1 = time.time()
 
 
 
