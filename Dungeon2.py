@@ -704,6 +704,7 @@ def ak47def():
     global spread
     global Newb_pistol
     global Newb_pistol_flip
+    global total_ammo
     spread = 0.2
     shoot_cooldown = 0.075
     damage = 1
@@ -711,6 +712,7 @@ def ak47def():
     magazin_size = 30
     reload_time = 3
     rounds_left = 30
+    total_ammo = 300
     Newb_pistol = pygame.image.load("ak47.png").convert_alpha()
     Newb_pistol_flip = pygame.transform.flip(Newb_pistol, False, True)
 def AWPdef():
@@ -724,6 +726,7 @@ def AWPdef():
     global spread
     global Newb_pistol
     global Newb_pistol_flip
+    global total_ammo
     shoot_cooldown = 1.5
     spread = 0.01
     damage = 10
@@ -731,6 +734,7 @@ def AWPdef():
     magazin_size = 10
     reload_time = 4
     rounds_left = 10
+    total_ammo = 100
     Newb_pistol = pygame.image.load("AWP.png").convert_alpha()
     Newb_pistol_flip = pygame.transform.flip(Newb_pistol, False, True)
 def Ammodef():
@@ -785,6 +789,7 @@ def shoot():
         if current_time1 - last_activation_time1 >= reload_time:
             last_activation_time1 = current_time1
             rounds_left = magazin_size
+
             print("reloading")
 
 
@@ -806,6 +811,7 @@ def display_ui():
     global total_bullets
     global infinity_display_exist
     global infinity_display
+    global total_ammo
     for i in range(player.max_health):
         img = pygame.image.load("empty_heart.png" if i >= player.health else "full_heart.png")
         img = pygame.transform.scale(img, (50, 50))
@@ -828,6 +834,7 @@ def display_ui():
         total_bullets_display = TEXT_FONT.render(f"{total_ammo}", True, BLACK)
         WINDOW.blit(total_bullets_display, (470, 597))
         infinity_display_exist = False
+
         if infinity_display in objects:
             objects.remove(infinity_display)
 
