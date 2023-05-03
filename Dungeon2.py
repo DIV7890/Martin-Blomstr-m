@@ -77,6 +77,8 @@ def doWork():
         math_equation = 523687 / 789456 * 89456
         loading_progress = i
     loading_finished = True
+
+
 def play_music(KEY):
     global music_playing
     global key_down
@@ -106,7 +108,9 @@ def play_music(KEY):
             mixer.music.play()
             playlist_index += 1
 
-class button():
+
+class button(): #Glör en klass för knappar. Klassen tar i omtanke vad som händer när man skapar en knapp.
+    # t.ex ritar upp knappen eller beräknar dess "bounderies"
     def __init__(self,x,y,image,scale):
         width = image.get_width()
         height = image.get_height()
@@ -127,12 +131,14 @@ class button():
             Break = True
             mixer.music.unpause()
         if  mpos[0] in range(528, 748) and mpos[1] in range(309, 393) and prev_mouse_state[0] and not curr_mouse_state[0]:
-            print("exit pga du klickade på quit knappen")
             exit()
 
         prev_mouse_state = curr_mouse_state
 
-class Object:
+
+class Object: # Gör en klass för "objects". I denna klass finns saker som inte rör sig men man kanske
+    # vill interagera med. Exempel på sånt är dörrar som man vill gå igenom.
+    # När man vill "spawna" in grejer måste de tillhöra en klass, ofta tilldelar vi de "objects-klassen"
     def __init__(self, x, y, width, height, image):
         self.x = x
         self.y = y
@@ -251,7 +257,7 @@ class Player(Entity):
         self.rect.height = self.height
 
 
-class Enemy(Entity):
+class Enemy(Entity): # Spawnar enemies och bestämmer deras hitbox, snabbhet, liv, osv
     def __init__(self, x, y, width, height, tileset, speed):
         super().__init__(x, y, width, height, tileset, speed)
         self.max_width = width
@@ -301,7 +307,7 @@ class Enemy(Entity):
         elif self.velocity[1] < self.velocity[0] < 0:
             self.direction = UP
 
-    def take_damage(self, damage, antal_nycklar):
+    def take_damage(self, damage, antal_nycklar): # Bestämmer om någonting ska droppas när man dödar en enemy
         self.health -= damage
         if self.health <= 0 or player.health <= 0:
             self.destroy()
@@ -460,29 +466,6 @@ class Enemy(Entity):
 is_game_over = False
 player_input = {"left": False, "right": False, "up": False, "down": False}
 
-
-class doors():
-    def __init__(self, x, y, width, height, image):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.image = image
-        self.velocity = [0, 0]
-        self.collider = [width, height]
-
-        objects.append(self)
-
-    def draw(self):
-        WINDOW.blit(pygame.transform.scale(self.image, (self.width, self.height)), (self.x, self.y))
-
-    def update(self):
-        self.draw()
-
-    def get_center(self):
-        return self.x + self.width / 2, self.y + self.height / 2
-
-
 def check_input(key, value):
     global unlock_chest
     global pickup_weapon
@@ -491,6 +474,7 @@ def check_input(key, value):
     global AWPYposs
     global replay
     global rounds_left
+    global reloading
     play_music(key)
     if key == pygame.K_a:
         player_input["left"] = value
@@ -516,14 +500,10 @@ def check_input(key, value):
         if player.x in range(int(ammoXposs - 35), int(ammoXposs + 35)) and player.y in range(int(ammoYposs - 35), int(ammoYposs + 35)):
             pickup_object = True
     elif key == pygame.K_r:
-        rounds_left = 0
-        print("reloading")
+        reloading = True
     elif key == pygame.K_ESCAPE:
         mixer.music.pause()
         pause()
-
-
-
 
 
 def load_tileset(filename, width, height):
@@ -644,11 +624,9 @@ def locked_chest(openK, open_chest, closed_chest, antal_kistor, w):
                     open_chest -= 1
                     antal_kistor -= 1
         if "ak47" in weapons_on_ground:
-            print("tog bort AKn för att det inte är ett rum med kista längre")
             objects.remove(ak47)
             weapons_on_ground.remove("ak47")
         if "AWP" in weapons_on_ground:
-            print("tog bort AWPn för att det inte är ett rum med kista längre")
             objects.remove(AWP)
             weapons_on_ground.remove("AWP")
         if "ammo_box" in objects_on_ground:
@@ -687,11 +665,6 @@ def locked_door(closed, open_door, closed_door,antal_dorrar):
                 open_door -= 1
 
     return closed, open_door, closed_door, antal_dorrar
-
-
-# test_object = Object(400, 400, 500, 500, pygame.image.load("pixilart-drawing (6).png"))
-# test_entity = Entity(400, 400, 50, 50, "player-sheet.png", 5)
-
 
 def ak47def():
     global vapen
@@ -738,11 +711,11 @@ def AWPdef():
     Newb_pistol = pygame.image.load("AWP.png").convert_alpha()
     Newb_pistol_flip = pygame.transform.flip(Newb_pistol, False, True)
 def Ammodef():
-    global rounds_left
-    global magazin_size
-    if rounds_left != magazin_size:
-        rounds_left = magazin_size
-        print("Du fick ammo")
+    global total_ammo
+    if vapen == "ak47":
+        total_ammo = 300
+    elif vapen == "AWP":
+        total_ammo = 100
 
 def shoot():
     global last_activation_time
@@ -757,8 +730,9 @@ def shoot():
     global loading_progress
     global loading_bar_width
     global total_ammo
+    global reloading
     current_time = time.time()
-    if rounds_left > 0:
+    if rounds_left > 0 and reloading == False:
         if current_time - last_activation_time >= shoot_cooldown:
             player_center = player.get_center()
             bullet = Object(player_center[0], player_center[1], 16, 16, pygame.image.load("bullet.png"))
@@ -774,11 +748,9 @@ def shoot():
             bullets.append(bullet)
             last_activation_time = current_time
             rounds_left -= 1
-            print("rounds left = " + str(rounds_left))
             last_activation_time1 = time.time()
     else:
         current_time1 = time.time()
-        print(current_time1-last_activation_time1)
         LOADING_BG = pygame.image.load("Loading Bar Background.png")
         LOADING_BG_RECT = LOADING_BG.get_rect(center=(640, 360))
         loading_bar = pygame.image.load("Loading Bar.png")
@@ -788,9 +760,25 @@ def shoot():
         loading_bar_width = 8
         if current_time1 - last_activation_time1 >= reload_time:
             last_activation_time1 = current_time1
-            rounds_left = magazin_size
+            if reloading == True:
+                if total_ammo >= magazin_size:
+                    total_ammo -= (magazin_size-rounds_left)
+                    rounds_left = magazin_size
+                    reloading = False
+                else:
+                    rounds_left = total_ammo
+                    total_ammo = 0
+                    reloading = False
 
-            print("reloading")
+            elif total_ammo >= magazin_size:
+                rounds_left = magazin_size
+                total_ammo -= magazin_size
+                reloading = False
+            else:
+                rounds_left = total_ammo
+                total_ammo = 0
+                reloading = False
+
             player_center = player.get_center()
             bullet = Object(player_center[0], player_center[1], 16, 16, pygame.image.load("bullet.png"))
             target_center = target.get_center()
@@ -806,7 +794,6 @@ def shoot():
             bullets.append(bullet)
             last_activation_time = current_time
             rounds_left -= 1
-            print("rounds left = " + str(rounds_left))
             last_activation_time1 = time.time()
 
 
@@ -871,7 +858,6 @@ def update_screen():
     CLOCK.tick(FRAME_RATE)
     pygame.display.update()
 def playing():
-    print("du är nu I paying")
     global s
     global unlock_chest
     global number_of_enemys
@@ -983,6 +969,7 @@ def playing():
     global total_ammo
     global infinity_display_exist
     global infinity_display
+    global reloading
     screen.fill((0,0,0))
     pygame.display.update()
     background = pygame.transform.scale(pygame.image.load("background.png"), WINDOW_SIZE)
@@ -1088,6 +1075,7 @@ def playing():
             loading_progress = 0
             loading_bar_width = 8
             total_ammo = 99999999999999999999999999999999999
+            reloading = False
 
             mixer.init()
             mixer.music.load(playlist[0])
@@ -1115,7 +1103,6 @@ def playing():
                 d += 1
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                print("planerad exit i play funktionen")
                 exit()
             elif event.type == pygame.KEYDOWN:
                 check_input(event.key, True)
@@ -1170,7 +1157,6 @@ def playing():
         if KeyXposs != 0 and KeyYposs != 0 and keys_on_screen != 0:
             if player.x in range(int(KeyXposs - 70), int(KeyXposs + 70)) and player.y in range(int(KeyYposs - 70),
                                                                                                int(KeyYposs + 70)):
-                print("Du har rört en nyckel!")
                 antal_nycklar += 1
                 objects.remove(Key)
                 keys_on_screen -= 1
@@ -1179,7 +1165,6 @@ def playing():
             if HeartXposs1 != 0 and HeartYposs1 != 0:
                 if player.x in range(int(HeartXposs1 - 70), int(HeartXposs1 + 70)) and player.y in range(
                         int(HeartYposs1 - 70), int(HeartYposs1 + 70)) and player.health != 5 and Heart1 in objects:
-                    print("Du har rört ett hjärta!")
                     objects.remove(Heart1)
                     hearts_on_screen -= 1
                     player.health += 1
@@ -1187,7 +1172,6 @@ def playing():
             if HeartXposs2 != 0 and HeartYposs2 != 0:
                 if player.x in range(int(HeartXposs2 - 70), int(HeartXposs2 + 70)) and player.y in range(
                         int(HeartYposs2 - 70), int(HeartYposs2 + 70)) and player.health != 5 and Heart2 in objects:
-                    print("Du har rört ett hjärta!")
                     objects.remove(Heart2)
                     hearts_on_screen -= 1
                     player.health += 1
@@ -1195,7 +1179,6 @@ def playing():
             if HeartXposs3 != 0 and HeartYposs3 != 0:
                 if player.x in range(int(HeartXposs3 - 70), int(HeartXposs3 + 70)) and player.y in range(
                         int(HeartYposs3 - 70), int(HeartYposs3 + 70)) and player.health != 5 and Heart3 in objects:
-                    print("Du har rört ett hjärta!")
                     objects.remove(Heart3)
                     hearts_on_screen -= 1
                     player.health += 1
@@ -1203,7 +1186,6 @@ def playing():
             if HeartXposs4 != 0 and HeartYposs4 != 0:
                 if player.x in range(int(HeartXposs4 - 70), int(HeartXposs4 + 70)) and player.y in range(
                         int(HeartYposs4 - 70), int(HeartYposs4 + 70)) and player.health != 5 and Heart4 in objects:
-                    print("Du har rört ett härta!")
                     objects.remove(Heart4)
                     hearts_on_screen -= 1
                     player.health += 1
@@ -1211,7 +1193,6 @@ def playing():
             if HeartXposs5 != 0 and HeartYposs5 != 0:
                 if player.x in range(int(HeartXposs5 - 70), int(HeartXposs5 + 70)) and player.y in range(
                         int(HeartYposs5 - 70), int(HeartYposs5 + 70)) and player.health != 5 and Heart5 in objects:
-                    print("Du har rört ett härta!")
                     objects.remove(Heart5)
                     hearts_on_screen -= 1
                     player.health += 1
@@ -1220,7 +1201,6 @@ def playing():
             if CoinXposs1 != 0 and CoinYposs1 != 0:
                 if player.x in range(int(CoinXposs1 - 70), int(CoinXposs1 + 70)) and player.y in range(
                         int(CoinYposs1 - 70), int(CoinYposs1 + 70)) and Coin1 in objects:
-                    print("Du har rört ett coin!")
                     objects.remove(Coin1)
                     coins_on_screen -= 1
                     t = random.randint(1, 3)
@@ -1229,7 +1209,6 @@ def playing():
             if CoinXposs2 != 0 and CoinYposs2 != 0:
                 if player.x in range(int(CoinXposs2 - 70), int(CoinXposs2 + 70)) and player.y in range(
                         int(CoinYposs2 - 70), int(CoinYposs2 + 70)) and Coin2 in objects:
-                    print("Du har rört ett coin!")
                     objects.remove(Coin2)
                     coins_on_screen -= 1
                     t = random.randint(1, 3)
@@ -1238,7 +1217,6 @@ def playing():
             if CoinXposs3 != 0 and CoinYposs3 != 0:
                 if player.x in range(int(CoinXposs3 - 70), int(CoinXposs3 + 70)) and player.y in range(
                         int(CoinYposs3 - 70), int(CoinYposs3 + 70)) and Coin3 in objects:
-                    print("Du har rört ett coin!")
                     objects.remove(Coin3)
                     coins_on_screen -= 1
                     t = random.randint(1, 3)
@@ -1247,7 +1225,6 @@ def playing():
             if CoinXposs4 != 0 and CoinYposs4 != 0:
                 if player.x in range(int(CoinXposs4 - 70), int(CoinXposs4 + 70)) and player.y in range(
                         int(CoinYposs4 - 70), int(CoinYposs4 + 70)) and Coin4 in objects:
-                    print("Du har rört ett coin!")
                     objects.remove(Coin4)
                     coins_on_screen -= 1
                     t = random.randint(1, 3)
@@ -1256,7 +1233,6 @@ def playing():
             if CoinXposs5 != 0 and CoinYposs5 != 0:
                 if player.x in range(int(CoinXposs5 - 70), int(CoinXposs5 + 70)) and player.y in range(
                         int(CoinYposs5 - 70), int(CoinYposs5 + 70)) and Coin5 in objects:
-                    print("Du har rört ett coin!")
                     objects.remove(Coin5)
                     coins_on_screen -= 1
                     t = random.randint(1, 3)
@@ -1265,7 +1241,6 @@ def playing():
             if CoinXposs6 != 0 and CoinYposs6 != 0:
                 if player.x in range(int(CoinXposs6 - 70), int(CoinXposs6 + 70)) and player.y in range(
                         int(CoinYposs6 - 70), int(CoinYposs6 + 70)) and Coin6 in objects:
-                    print("Du har rört ett coin!")
                     objects.remove(Coin6)
                     coins_on_screen -= 1
                     t = random.randint(1, 3)
@@ -1274,7 +1249,6 @@ def playing():
             if CoinXposs7 != 0 and CoinYposs7 != 0:
                 if player.x in range(int(CoinXposs7 - 70), int(CoinXposs7 + 70)) and player.y in range(
                         int(CoinYposs7 - 70), int(CoinYposs7 + 70)) and Coin7 in objects:
-                    print("Du har rört ett coin!")
                     objects.remove(Coin7)
                     coins_on_screen -= 1
                     t = random.randint(1, 3)
@@ -1283,7 +1257,6 @@ def playing():
             if CoinXposs8 != 0 and CoinYposs8 != 0:
                 if player.x in range(int(CoinXposs8 - 70), int(CoinXposs8 + 70)) and player.y in range(
                         int(CoinYposs8 - 70), int(CoinYposs8 + 70)) and Coin8 in objects:
-                    print("Du har rört ett coin!")
                     objects.remove(Coin8)
                     coins_on_screen -= 1
                     t = random.randint(1, 3)
@@ -1292,7 +1265,6 @@ def playing():
             if CoinXposs9 != 0 and CoinYposs9 != 0:
                 if player.x in range(int(CoinXposs9 - 70), int(CoinXposs9 + 70)) and player.y in range(
                         int(CoinYposs9 - 70), int(CoinYposs9 + 70)) and Coin9 in objects:
-                    print("Du har rört ett coin!")
                     objects.remove(Coin9)
                     coins_on_screen -= 1
                     t = random.randint(1, 3)
@@ -1301,7 +1273,6 @@ def playing():
             if CoinXposs10 != 0 and CoinYposs10 != 0:
                 if player.x in range(int(CoinXposs10 - 70), int(CoinXposs10 + 70)) and player.y in range(
                         int(CoinYposs10 - 70), int(CoinYposs10 + 70)) and Coin10 in objects:
-                    print("Du har rört ett coin!")
                     objects.remove(Coin10)
                     coins_on_screen -= 1
                     t = random.randint(1, 3)
@@ -1383,12 +1354,10 @@ def playing():
                 antal_oppnade_kistor_denna_runda = 0
                 hearts_on_screen = 0
                 coins_on_screen = 0
-        if ak47 in objects:
-            print("ak47 finns i objects")
+
         if player.x in range(int(ak47Xposs - 35), int(ak47Xposs + 35)) and player.y in range(int(ak47Yposs - 35),int(ak47Yposs + 35)) and ak47 in objects and pickup_weapon == True:
             objects.remove(ak47)
             ak47def()
-            print("du har rört en ak47")
             pickup_weapon = False
             weapons_on_ground.remove("ak47")
             ak47Xposs = 0
@@ -1397,7 +1366,6 @@ def playing():
         if player.x in range(int(AWPXposs - 35), int(AWPXposs + 35)) and player.y in range(int(AWPYposs - 35),int(AWPYposs + 35)) and AWP in objects and pickup_weapon == True:
             objects.remove(AWP)
             AWPdef()
-            print("du har rört en AWP")
             pickup_weapon = False
             weapons_on_ground.remove("AWP")
             AWPXposs = 0
@@ -1455,7 +1423,6 @@ def playing():
         update_screen()
 
 def Play_again():
-    print("du är nu i \"play-again\" screen")
     global mpos
     global Break
     global replay
@@ -1470,7 +1437,6 @@ def Play_again():
         update_screen()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                print("planerad exit")
                 exit()
         WINDOW.blit(background, WINDOW_CENTER)
         replay_button.draw()
@@ -1482,7 +1448,6 @@ def Play_again():
             break
 
 def pause():
-    print("du är nu i \"play-again\" screen")
     global mpos
     global Break
     global replay
@@ -1497,7 +1462,6 @@ def pause():
         update_screen()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                print("planerad exit")
                 exit()
         WINDOW.blit(background, WINDOW_CENTER)
         resume_button.draw()
@@ -1507,7 +1471,6 @@ def pause():
             pygame.mouse.set_visible(False)
             break
 def home_screen():
-    print("du är nu i home screen")
     global mpos
     global Break
     global replay
@@ -1522,7 +1485,6 @@ def home_screen():
         update_screen()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                print("planerad exit")
                 exit()
         WINDOW.blit(background, WINDOW_CENTER)
         start_button.draw()
