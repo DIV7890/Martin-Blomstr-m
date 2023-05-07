@@ -123,15 +123,29 @@ class button(): #Glör en klass för knappar. Klassen tar i omtanke vad som hän
         global curr_mouse_state
         global Break
         global prev_mpos
+        global Finish_screen
+        global Home_screen
+        global Pause
+        global Play_again
         screen.blit(self.image, self.rect.topleft)
 
         mpos = pygame.mouse.get_pos()
         curr_mouse_state = pygame.mouse.get_pressed()
-        if mpos[0] in range(530, 748) and mpos[1] in range(123, 208) and prev_mouse_state[0] and not curr_mouse_state[0]:
-            Break = True
-            mixer.music.unpause()
-        if  mpos[0] in range(528, 748) and mpos[1] in range(309, 393) and prev_mouse_state[0] and not curr_mouse_state[0]:
-            exit()
+        if Home_screen or Pause or Play_again:
+            if mpos[0] in range(530, 748) and mpos[1] in range(123, 208) and prev_mouse_state[0] and not curr_mouse_state[0]:
+                Break = True
+                mixer.music.unpause()
+            if  mpos[0] in range(528, 748) and mpos[1] in range(309, 393) and prev_mouse_state[0] and not curr_mouse_state[0]:
+                exit()
+
+        elif Finish_screen:
+            if mpos[0] in range(328, 551) and mpos[1] in range(488, 560) and prev_mouse_state[0] and not \
+            curr_mouse_state[0]:
+                Break = True
+                mixer.music.unpause()
+            if mpos[0] in range(728, 948) and mpos[1] in range(488, 560) and prev_mouse_state[0] and not \
+            curr_mouse_state[0]:
+                exit()
 
         prev_mouse_state = curr_mouse_state
 
@@ -970,6 +984,10 @@ def playing():
     global infinity_display_exist
     global infinity_display
     global reloading
+    global Finish_screen
+    global Home_screen
+    global Pause
+    global Play_again
     screen.fill((0,0,0))
     pygame.display.update()
     background = pygame.transform.scale(pygame.image.load("background.png"), WINDOW_SIZE)
@@ -981,13 +999,18 @@ def playing():
     run = True
     while run:
         if replay:
-            damage = 0.5
+            damage = 1
             shoot_cooldown = 0.25
             vapen = "pistol"
             antal_oppnade_kistor_denna_runda = 0
             unlock_chest = False
             pickup_weapon = False
             pickup_object = False
+            reloading = False
+            Finish_screen = False
+            Home_screen = False
+            Pause = False
+            Play_again = False
             antal_hjartan = 0
             hearts_on_screen = 0
             HeartXposs1 = 0
@@ -1043,7 +1066,7 @@ def playing():
             ammo_box = 0
             last_activation_time1 = 0
             last_activation_time = 0
-            room_counter = 15
+            room_counter = 49
             antal_kistor = 0
             open_chest = 0
             closed_chest = 0
@@ -1418,14 +1441,28 @@ def playing():
             check_input(115, False)
 
             update_screen()
-            Play_again()
+            play_again()
             continue
+        if room_counter == 50:
+            pygame.mouse.set_visible(True)
+            run = False
+            enemies = []
+            objects = []
+            check_input(119, False)
+            check_input(97, False)
+            check_input(100, False)
+            check_input(115, False)
+            finish_screen()
+            print("finish screen")
         update_screen()
 
-def Play_again():
+
+def play_again():
+    global Play_again
     global mpos
     global Break
     global replay
+    Play_again = True
     pygame.mouse.set_visible(True)
     mpos = pygame.mouse.get_pos()
     background = pygame.transform.scale(pygame.image.load("Background.png"), (1280, 720))
@@ -1443,14 +1480,17 @@ def Play_again():
         quit_button.draw()
         if Break == True:
             replay = True
+            Play_again = False
             Break = False
             playing()
             break
 
 def pause():
+    global Pause
     global mpos
     global Break
     global replay
+    Pause = True
     pygame.mouse.set_visible(True)
     mpos = pygame.mouse.get_pos()
     background = pygame.transform.scale(pygame.image.load("Background.png"), (1280, 720))
@@ -1468,12 +1508,15 @@ def pause():
         quit_button.draw()
         if Break == True:
             Break = False
+            Pause = False
             pygame.mouse.set_visible(False)
             break
 def home_screen():
+    global Home_screen
     global mpos
     global Break
     global replay
+    Home_screen = True
     pygame.mouse.set_visible(True)
     mpos = pygame.mouse.get_pos()
     background = pygame.transform.scale(pygame.image.load("home_screen.jpg"), (1280, 720))
@@ -1492,6 +1535,36 @@ def home_screen():
         if Break:
             replay = True
             Break = False
+            Home_screen = False
+            playing()
+            break
+
+def finish_screen():
+    global Finish_screen
+    global mpos
+    global Break
+    global replay
+    mixer.music.pause()
+    Finish_screen = True
+    pygame.mouse.set_visible(True)
+    mpos = pygame.mouse.get_pos()
+    background = pygame.transform.scale(pygame.image.load("you_win.png"), (1280, 720))
+    replay_image = pygame.image.load("replay_button.png").convert_alpha()
+    replay_button = button(WINDOW_SIZE[0]/2 - 200, 550, replay_image, 7)
+    quit_image = pygame.image.load("quit_button.png").convert_alpha()
+    quit_button = button(WINDOW_SIZE[0]/2 + 200, 550, quit_image, 7)
+    while True:
+        update_screen()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                exit()
+        WINDOW.blit(background, WINDOW_CENTER)
+        replay_button.draw()
+        quit_button.draw()
+        if Break == True:
+            replay = True
+            Break = False
+            Finish_screen = False
             playing()
             break
 
