@@ -70,7 +70,7 @@ mixer.music.set_volume(0.2)
 # Play the music
 mixer.music.play()
 
-def doWork():
+def doWork(): # bestämmer hur lång tid en loading bar till reloadingen ska vara (vi hann inte färdigt)
     global loading_finished
     global loading_progress
     for i in range(WORK):
@@ -79,7 +79,7 @@ def doWork():
     loading_finished = True
 
 
-def play_music(KEY):
+def play_music(KEY): # gör en definition som spelar musik
     global music_playing
     global key_down
     global playlist_index
@@ -111,14 +111,14 @@ def play_music(KEY):
 
 class button(): #Glör en klass för knappar. Klassen tar i omtanke vad som händer när man skapar en knapp.
     # t.ex ritar upp knappen eller beräknar dess "bounderies"
-    def __init__(self,x,y,image,scale):
+    def __init__(self,x,y,image,scale): # Skapar knappen
         width = image.get_width()
         height = image.get_height()
         self.image = pygame.transform.scale(image, (int(width*scale),int(height*scale)))
         self.rect = self.image.get_rect()
         self.rect.center = (x,y)
 
-    def draw(self):
+    def draw(self): # ritar upp en knapp
         global prev_mouse_state
         global curr_mouse_state
         global Break
@@ -155,7 +155,7 @@ class button(): #Glör en klass för knappar. Klassen tar i omtanke vad som hän
 class Object: # Gör en klass för "objects". I denna klass finns saker som inte rör sig men man kanske
     # vill interagera med. Exempel på sånt är dörrar som man vill gå igenom.
     # När man vill "spawna" in grejer måste de tillhöra en klass, ofta tilldelar vi de "objects-klassen"
-    def __init__(self, x, y, width, height, image):
+    def __init__(self, x, y, width, height, image): # skapar objektet
         self.x = x
         self.y = y
         self.width = width
@@ -166,21 +166,21 @@ class Object: # Gör en klass för "objects". I denna klass finns saker som inte
 
         objects.append(self)
 
-    def draw(self):
+    def draw(self): # ritar upp objektet
         WINDOW.blit(pygame.transform.scale(self.image, (self.width, self.height)), (self.x, self.y))
         self.center = self.get_center()
 
-    def update(self):
+    def update(self): # uppdaterar objektet
         self.x += self.velocity[0]
         self.y += self.velocity[1]
         self.draw()
 
-    def get_center(self):
+    def get_center(self): # bestämmer ett centrum på objektet
         return self.x + self.width / 2, self.y + self.height / 2
 
 
-class Entity(Object):
-    def __init__(self, x, y, width, height, tileset, speed):
+class Entity(Object): # Allting är objects som man kan se i classen (värdet som stopppas in i entity classen) Entity är sedanen typ av objects. Entity bestämmer hur en entity beter sig och vad den ska göra.
+    def __init__(self, x, y, width, height, tileset, speed): # skapar en entity
         super().__init__(x, y, width, height, None)
         self.speed = speed
 
@@ -191,7 +191,7 @@ class Entity(Object):
         self.frames = [0, 1, 0, 2]
         self.frame_timer = 0
 
-    def change_direction(self):
+    def change_direction(self): # bestämmer vad som händer när en entity ändrar riktning
         if self.velocity[0] < 0:
             self.direction = HORIZONTAL
             self.flipX = True
@@ -203,7 +203,7 @@ class Entity(Object):
         elif self.velocity[1] < 0:
             self.direction = UP
 
-    def draw(self):
+    def draw(self): # ritar upp entites
         image = pygame.transform.scale(self.tileset[self.frames[self.frame]][self.direction], (self.width, self.height))
 
         self.change_direction()
@@ -226,19 +226,19 @@ class Entity(Object):
 
         self.frame_timer = 0
 
-    def update(self):
+    def update(self): # Uppdaterar entities
         self.x += self.velocity[0] * self.speed
         self.y += self.velocity[1] * self.speed
         self.draw()
 
 
-class Player(Entity):
-    def __init__(self, x, y, width, height, tileset, speed):
+class Player(Entity): # Skapar spelaren och bestämmer vad och hur den ska göra någonting.
+    def __init__(self, x, y, width, height, tileset, speed):  #skapar spelaren
         super().__init__(x, y, width, height, tileset, speed)
         self.health = self.max_health = 5
         self.rect = pygame.Rect(x, y, width, height)
 
-    def handle_weapons(self, display):
+    def handle_weapons(self, display): # gör så att vapnet snurrar runt spelaren
         target.x, target.y = pygame.mouse.get_pos()
 
         rel_x, rel_y = target.x - player.x, target.y - player.y
@@ -260,7 +260,7 @@ class Player(Entity):
                 self.x + 35 - int(Newb_pistol_copy2.get_width() / 2),
                 self.y + 35 - int(Newb_pistol_copy2.get_height() / 2)))
 
-    def update(self):
+    def update(self): # uppdaterar spelaren
         super().update()
         self.handle_weapons(WINDOW)
 
@@ -274,7 +274,7 @@ class Player(Entity):
 
 
 class Enemy(Entity): # Spawnar enemies och bestämmer deras hitbox, snabbhet, liv, osv
-    def __init__(self, x, y, width, height, tileset, speed):
+    def __init__(self, x, y, width, height, tileset, speed): # skapar en varelse som är en mortståndare
         super().__init__(x, y, width, height, tileset, speed)
         self.max_width = width
         self.max_height = height
@@ -292,7 +292,7 @@ class Enemy(Entity): # Spawnar enemies och bestämmer deras hitbox, snabbhet, li
 
         self.start_timer = 0
 
-    def cooldown(self):
+    def cooldown(self): # definerar en cooldown
         if self.start_timer < 1:
             self.start_timer += 0.035
             self.x -= 0.5
@@ -300,7 +300,7 @@ class Enemy(Entity): # Spawnar enemies och bestämmer deras hitbox, snabbhet, li
         self.width = int(self.max_width * self.start_timer)
         self.height = int(self.max_height * self.start_timer)
 
-    def update(self):
+    def update(self): # uppdaterar motstondarna
         player_center = player.get_center()
         enemy_center = self.get_center()
 
@@ -317,7 +317,7 @@ class Enemy(Entity): # Spawnar enemies och bestämmer deras hitbox, snabbhet, li
             self.velocity = [0, 0]
         super().update()
 
-    def change_direction(self):
+    def change_direction(self): # Definerar vad som ska hända när man vill byta riktining
         super().change_direction()
 
         if self.velocity[1] > self.velocity[0] > 0:
@@ -476,7 +476,7 @@ class Enemy(Entity): # Spawnar enemies och bestämmer deras hitbox, snabbhet, li
                         Coin10 = Object(CoinXposs10 + 5, CoinYposs10 + 5, 25, 25, pygame.image.load("Coin.png"))
                         coins_on_screen += 1
 
-    def destroy(self):
+    def destroy(self): # kollar om ett objekt ska förstöras
         objects.remove(self)
         enemies.remove(self)
 
@@ -484,7 +484,7 @@ class Enemy(Entity): # Spawnar enemies och bestämmer deras hitbox, snabbhet, li
 is_game_over = False
 player_input = {"left": False, "right": False, "up": False, "down": False}
 
-def check_input(key, value):
+def check_input(key, value): # kollar om en knapp är nedtryckt
     global unlock_chest
     global pickup_weapon
     global pickup_object
@@ -540,7 +540,7 @@ def load_tileset(filename, width, height):
     return tileset
 
 
-def enemy_spawner1():
+def enemy_spawner1(): #spawnar in mobs
     if room_counter <= 10:
         for i in range(random.randint(3, 6)):
             enemy_spawner()
@@ -557,7 +557,7 @@ def enemy_spawner1():
         for i in range(random.randint(7, 14)):
             enemy_spawner()
 
-def enemy_spawner():
+def enemy_spawner(): # Spawnar in mobs
     global enemy
     for i in range(0, 1):
         randomx = random.randint(BOUNDS_X[0], BOUNDS_X[1] - 75)
@@ -569,7 +569,7 @@ def enemy_spawner():
             enemy.y = random.randint(BOUNDS_Y[0], BOUNDS_Y[1] - 75)
 
 
-def locked_chest(openK, open_chest, closed_chest, antal_kistor, w):
+def locked_chest(openK, open_chest, closed_chest, antal_kistor, w): #kollar om kistan ska vara öppen eller stängd
     global room_counter
     global chest1
     global chest0
@@ -668,7 +668,7 @@ def locked_chest(openK, open_chest, closed_chest, antal_kistor, w):
     return openK, open_chest, closed_chest, antal_kistor
 
 
-def locked_door(closed, open_door, closed_door,antal_dorrar):
+def locked_door(closed, open_door, closed_door,antal_dorrar): # Kollar om dörren ska vara öppen eller stängd
     global door1
     global door0
     if closed == False: # dörren ska vara öppen
@@ -699,7 +699,7 @@ def locked_door(closed, open_door, closed_door,antal_dorrar):
 
     return closed, open_door, closed_door, antal_dorrar
 
-def ak47def():
+def ak47def(): # Definerar allting kring AK47:an
     global vapen
     global shoot_cooldown
     global damage
@@ -721,7 +721,7 @@ def ak47def():
     total_ammo = 300
     Newb_pistol = pygame.image.load("ak47.png").convert_alpha()
     Newb_pistol_flip = pygame.transform.flip(Newb_pistol, False, True)
-def AWPdef():
+def AWPdef(): # Definerar allting kring AWP
     global rounds_left
     global reload_time
     global vapen
@@ -743,14 +743,14 @@ def AWPdef():
     total_ammo = 100
     Newb_pistol = pygame.image.load("AWP.png").convert_alpha()
     Newb_pistol_flip = pygame.transform.flip(Newb_pistol, False, True)
-def Ammodef():
+def Ammodef(): # Kollar hur mycket ammo varje vapen ska ha i magazinet från början
     global total_ammo
     if vapen == "ak47":
         total_ammo = 300
     elif vapen == "AWP":
         total_ammo = 100
 
-def shoot():
+def shoot(): # Skuter ett skott och håller koll på reloadtime och antal ammo
     global last_activation_time
     global current_time1
     global rounds_fired
@@ -831,7 +831,7 @@ def shoot():
 
 
 
-def check_collisions(obj1, obj2):
+def check_collisions(obj1, obj2): # Kollar om två saker kolliderar
     x1, y1 = obj1.get_center()
     x2, y2 = obj2.get_center()
     w1, h1 = obj1.collider[0] / 2, obj1.collider[1] / 2
@@ -841,7 +841,7 @@ def check_collisions(obj1, obj2):
     return False
 
 
-def display_ui():
+def display_ui(): # Uppdaterar displays som t.ex antal ammo
     global antal_nycklar
     global rounds_left
     global vapen
@@ -887,10 +887,10 @@ def display_ui():
         WINDOW.blit(next_room, (WINDOW_SIZE[0] / 2 - 18, 0))
 
 
-def update_screen():
+def update_screen(): # Uppdaterar skärmen
     CLOCK.tick(FRAME_RATE)
     pygame.display.update()
-def playing():
+def playing(): # "huvud-funktionen" det är här självaste spelet skapas och allting görs.
     global s
     global unlock_chest
     global number_of_enemys
@@ -1475,7 +1475,7 @@ def playing():
             print("finish screen")
         update_screen()
 
-def play_again():
+def play_again(): # gör en skärm till när spelaren får slut på liv dvs dör
     global Play_again
     global mpos
     global Break
@@ -1503,7 +1503,7 @@ def play_again():
             playing()
             break
 
-def pause():
+def pause(): # Gör en skärm om man pausar skärmen"
     global Pause
     global mpos
     global Break
@@ -1529,7 +1529,7 @@ def pause():
             Break = False
             pygame.mouse.set_visible(False)
             break
-def home_screen():
+def home_screen(): # Gör en skärm som är en "home screen"
     global mpos
     global Home_screen
     global Break
@@ -1557,7 +1557,7 @@ def home_screen():
             playing()
             break
 
-def finish_screen():
+def finish_screen(): # Gör en skärm när man klarar av spelet.
     global Finish_screen
     global mpos
     global Break
