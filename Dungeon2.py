@@ -577,7 +577,7 @@ def locked_chest(openK, open_chest, closed_chest, antal_kistor, w):
     global ammoXposs
     global ammoYposs
     global ammo_box
-    if math.gcd(15,room_counter) == 15 and len(enemies) == 0 and antal_kistor == 0 and room_counter != 0:
+    if math.gcd(10,room_counter) == 10 and len(enemies) == 0 and antal_kistor == 0 and room_counter != 0:
         chest1 = Object(WINDOW_SIZE[0] / 2 - 50, WINDOW_SIZE[1] / 2, 100, 100, pygame.image.load("closed_chest.png"))
         chest_rect = pygame.Rect(chest1.x, chest1.y, chest1.width, chest1.height)
         objects.remove(chest1)
@@ -606,14 +606,14 @@ def locked_chest(openK, open_chest, closed_chest, antal_kistor, w):
                     HeartYposs5 = (WINDOW_SIZE[1] / 2 - 100)
                     Heart5 = Object(HeartXposs5, HeartYposs5, 32, 32, pygame.image.load("full_heart.png"))
                     hearts_on_screen += 1
-                if "ak47" not in weapons_on_ground and room_counter == 15:
+                if "ak47" not in weapons_on_ground and room_counter == 20:
                     r = random.randint(1, 1)
                     if r == 1:
                         ak47Xposs = (WINDOW_SIZE[0] / 2 + 100)
                         ak47Yposs = (WINDOW_SIZE[1] / 2)
                         ak47 = Object(ak47Xposs, ak47Yposs, 32, 32, pygame.image.load("ak47.png"))
                         weapons_on_ground.append("ak47")
-                if "AWP" not in weapons_on_ground and room_counter == 30:
+                if "AWP" not in weapons_on_ground and room_counter == 40:
                     r = random.randint(1, 1)
                     if r == 1:
                         AWPXposs = (WINDOW_SIZE[0] / 2 + 20)
@@ -998,7 +998,7 @@ def playing():
     run = True
     while run:
         if replay:
-            damage = 0.5
+            damage = 1
             shoot_cooldown = 0.25
             vapen = "pistol"
             antal_oppnade_kistor_denna_runda = 0
