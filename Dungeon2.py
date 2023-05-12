@@ -593,7 +593,10 @@ def locked_chest(openK, open_chest, closed_chest, antal_kistor, w): #kollar om k
     global ammoXposs
     global ammoYposs
     global ammo_box
-    if math.gcd(10,room_counter) == 10 and len(enemies) == 0 and antal_kistor == 0 and room_counter != 0:
+    print(room_counter)
+    print(len(enemies))
+    print(antal_kistor)
+    if room_counter % 10 == 0 and len(enemies) == 0 and antal_kistor == 0 and room_counter != 0:
         chest1 = Object(WINDOW_SIZE[0] / 2 - 50, WINDOW_SIZE[1] / 2, 100, 100, pygame.image.load("closed_chest.png"))
         chest_rect = pygame.Rect(chest1.x, chest1.y, chest1.width, chest1.height)
         objects.remove(chest1)
@@ -644,7 +647,7 @@ def locked_chest(openK, open_chest, closed_chest, antal_kistor, w): #kollar om k
                         ammo_box = Object(ammoXposs, ammoYposs, 32, 32, pygame.image.load("ammo_box.png"))
                         objects_on_ground.append("ammo_box")
 
-    if math.gcd(15,room_counter) != 15 and room_counter != 0:
+    if room_counter % 10 != 0 and room_counter != 0:
         if antal_kistor != 0:
             if closed_chest != 0:
                 while closed_chest > 0:
@@ -1085,7 +1088,7 @@ def playing(): # "huvud-funktionen" det är här självaste spelet skapas och al
             ammo_box = 0
             last_activation_time1 = 0
             last_activation_time = 0
-            room_counter = 49
+            room_counter = 20
             antal_kistor = 0
             open_chest = 0
             closed_chest = 0
