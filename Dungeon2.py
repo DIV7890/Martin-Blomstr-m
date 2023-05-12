@@ -593,9 +593,6 @@ def locked_chest(openK, open_chest, closed_chest, antal_kistor, w): #kollar om k
     global ammoXposs
     global ammoYposs
     global ammo_box
-    print(room_counter)
-    print(len(enemies))
-    print(antal_kistor)
     if room_counter % 10 == 0 and len(enemies) == 0 and antal_kistor == 0 and room_counter != 0:
         chest1 = Object(WINDOW_SIZE[0] / 2 - 50, WINDOW_SIZE[1] / 2, 100, 100, pygame.image.load("closed_chest.png"))
         chest_rect = pygame.Rect(chest1.x, chest1.y, chest1.width, chest1.height)
@@ -1088,7 +1085,7 @@ def playing(): # "huvud-funktionen" det är här självaste spelet skapas och al
             ammo_box = 0
             last_activation_time1 = 0
             last_activation_time = 0
-            room_counter = 20
+            room_counter = 40
             antal_kistor = 0
             open_chest = 0
             closed_chest = 0
@@ -1463,7 +1460,7 @@ def playing(): # "huvud-funktionen" det är här självaste spelet skapas och al
             check_input(115, False)
 
             update_screen()
-            Play_again()
+            play_again()
             continue
         if room_counter == 50:
             pygame.mouse.set_visible(True)
@@ -1475,7 +1472,6 @@ def playing(): # "huvud-funktionen" det är här självaste spelet skapas och al
             check_input(100, False)
             check_input(115, False)
             finish_screen()
-            print("finish screen")
         update_screen()
 
 def play_again(): # gör en skärm till när spelaren får slut på liv dvs dör
