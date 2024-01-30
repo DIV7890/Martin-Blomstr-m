@@ -99,8 +99,6 @@ def play_music(KEY): # gör en definition som spelar musik
                 mixer.music.unpause()
                 music_playing = True
 
-
-
     elif KEY == pygame.K_n:
         if key_down == 1:
             if playlist_index == len(playlist):
