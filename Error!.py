@@ -62,6 +62,7 @@ class Object:
         Objects.append(self)
     def remove(self):
         Objects.remove(self)
+        print("removed object")
 
 
 class Button(Object): # knapp klassen är ett object i spelet men tar även argumentet "type" för att välja vilken typ av knapp det är
@@ -73,12 +74,12 @@ class Button(Object): # knapp klassen är ett object i spelet men tar även argu
 
     def is_clicked(self):
         if int(pg.mouse.get_pos()[0]) in self.area[0] and int(pg.mouse.get_pos()[1]) in self.area[1] and pg.mouse.get_pressed(num_buttons=3)[0]:
-            print(self)
-            self.remove(self)
+            self.remove()
+            Object.remove(self)
 
     def remove(self):
-        print(self)
         Buttons.remove(self)
+        print("removed button")
 
 
 
