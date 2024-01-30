@@ -112,21 +112,22 @@ class Entity(Object):
 
         Entitys.append(self)
 
-        if self.health <= 0:
-            self.remove()
-
     def is_clicked(self):
         if int(pg.mouse.get_pos()[0]) in self.area[0] and int(pg.mouse.get_pos()[1]) in self.area[1] and pg.mouse.get_pressed(num_buttons=3)[0]:
             self.health -= 1
+            print("clicked the button")
 
     def remove(self):
-        Entitys.remove(self)
-        Objects.remove(self)
-        self.x = -1
-        self.y = -1
-        self.width = -1
-        self.height = -1
-        self.image = "transparent.png"
+        if self.health <= 0:
+            self.remove()
+            Entitys.remove(self)
+            Objects.remove(self)
+            self.x = -1
+            self.y = -1
+            self.width = -1
+            self.height = -1
+            self.image = pg.image.load("transparent.png")
+            print("removed")
 
 
 
