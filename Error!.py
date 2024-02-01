@@ -1,178 +1,141 @@
+# Alla imports som krävs för spelet
+import time as t
 import pygame as pg
-import pygame.display
+import random
+import math as m
+import pyautogui
+import keyboard as k
 
-pg.init()
+# Alla variabler samlas här
+Frame_Rate = 60
+Run = True
+Objects = []
+Buttons = []
+Entitys = []
+Black = (0,0,0)
 
-RED = (255, 0, 0)
-WINDOW_SIZE = (1280, 720)
-WINDOW_TITLE = "Error!"
 
-HORIZONTAL = 1
-UP = 2
-DOWN = 0
+# initierar pygame skärmen och dess tickrate
+Clock = pg.time.Clock()
+screen_width, screen_height = pyautogui.size()
+Window_Center = (screen_width / 2, screen_height / 2)
+WINDOW_SIZE = [screen_width, screen_height]
+screen = pg.display.set_mode((screen_width, screen_height))
+pg.display.set_caption('Error!')
 
-FRAME_RATE = 60
-ANIMATION_FRAME_RATE = 8
 
-WINDOW = pg.display.set_mode((WINDOW_SIZE))
-pg.display.set_caption(WINDOW_TITLE)
 
-CLOCK = pg.time.Clock()
+def update_screen():
+    Clock.tick(Frame_Rate)
+    pg.display.update()
 
-background = pg.transform.scale(pg.image.load("BG.jpg"), WINDOW_SIZE)
 
-objects = []
+def check_for_input(key):
+    if key == pg.K_ESCAPE:
+        exit()
+
+def home_screen():
+    Start_Button = Button(Window_Center[0], Window_Center[1], 200, 120, pg.image.load("start_button.png").convert_alpha(), "start")
+    while Run:
+        update_screen()
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                exit()
+            elif event.type == pg.KEYDOWN:
+                check_for_input(event.key)
+
+        for b in Buttons:
+            b.is_clicked()
+
+def playing():
+    screen.fill(Black)
+    entity1 = Entity(Window_Center[0], Window_Center[1], 200, 120, pg.image.load("start_button.png").convert_alpha(), 1)
+    while Run:
+        update_screen()
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                exit()
+            elif event.type == pg.KEYDOWN:
+                check_for_input(event.key)
+
+        for b in Buttons:
+            b.is_clicked()
+
+
 
 class Object:
+
     def __init__(self, x, y, width, height, image):
         self.x = x
         self.y = y
         self.width = width
         self.height = height
         self.image = image
-        self.velocity = [0, 0]
+        self.position = (self.x - self.width / 2, self.y - self.height / 2)
+        screen.blit(pg.transform.scale(self.image, (self.width, self.height)), self.position)
+        self.area = (range(int(self.position[0] - self.width), int(self.position[0] + self.width)),range(int(self.position[1] - self.height),int(self.position[1] + self.height)))
 
-        objects.append(self)
+        Objects.append(self)
+    def remove(self):
+        Objects.remove(self)
+        print("removed object")
 
 
-    def draw(self):
-        WINDOW.blit(pg.transform.scale(self.image, (self.width, self.height)), (self.x, self.y))
+class Button(Object): # knapp klassen är ett object i spelet men tar även argumentet "type" för att välja vilken typ av knapp det är
+    def __init__(self, x, y, width, height, image, type):
+        super().__init__(x, y, width, height, image)
+        self.type = type
 
-    def update(self):
-        self.x += self.velocity[0]
-        self.y += self.velocity[1]
-        self.draw()
+        Buttons.append(self)
+
+    def is_clicked(self):
+        if int(pg.mouse.get_pos()[0]) in self.area[0] and int(pg.mouse.get_pos()[1]) in self.area[1] and pg.mouse.get_pressed(num_buttons=3)[0]:
+            if self.type == "start":
+                playing()
+            self.remove()
+            Object.remove(self)
+
+    def remove(self):
+        Buttons.remove(self)
 
 class Entity(Object):
-    def __init__(self, x, y, width, height, tileset, speed):
-        super().__init__(x, y, width, height, None)
-        self.speed = speed
+    def __init__(self, x, y, width, height, image, health):
+        super().__init__(x, y, width, height, image)
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.image = image
+        self.health = health
+        self.position = (self.x - self.width / 2, self.y - self.height / 2)
+        self.area = (range(int(self.position[0] - self.width), int(self.position[0] + self.width)), range(int(self.position[1] - self.height), int(self.position[1] + self.height)))
 
-        self.tileset = load_tileset(tileset, 32, 32)
-        self.direction = 0
-        self.flipX = False
-        self.frame = 0
-        self.frames = [0, 1, 0, 2]
-        self.frame_timer = 0
-        self.directionADWS = [False, False, False, False]
+        Entitys.append(self)
 
+    def is_clicked(self):
+        if int(pg.mouse.get_pos()[0]) in self.area[0] and int(pg.mouse.get_pos()[1]) in self.area[1] and pg.mouse.get_pressed(num_buttons=3)[0]:
+            self.health -= 1
+            print("clicked the button")
 
-    def change_direction(self):
-        if self.velocity[0] < 0:
-            self.direction = HORIZONTAL
-            self.flipX = True
-        elif self.velocity[0] > 0:
-            self.direction = HORIZONTAL
-            self.flipX = False
-        elif self.velocity[1] > 0:
-            self.direction = DOWN
-        elif self.velocity[1] < 0:
-            self.direction = UP
-    def draw(self):
-        image = pg.transform.scale(self.tileset[self.frames[self.frame]][self.direction], (self.width, self.height))
-
-        self.change_direction()
-
-        image = pg.transform.flip(image, self.flipX, False)
-
-        WINDOW.blit(image, (self.x, self.y))
-
-        if self.velocity[0] == 0 and self.velocity[1] == 0:
-            self.frame = 0
-            return
-
-
-        self.frame_timer += 1
-
-        if self.frame_timer < ANIMATION_FRAME_RATE:
-            return
-
-        self.frame += 1
-        if self.frame >= len(self.frames):
-            self.frame = 0
-
-        self.frame_timer = 0
-
-    def update(self):
-        self.velocity[0] = self.directionADWS[1] - self.directionADWS[0]
-        self.velocity[1] = self.directionADWS[3] - self.directionADWS[2]
-        self.x += self.velocity[0] * self.speed
-        self.y += self.velocity[1] * self.speed
-        self.draw()
-
-class Player(Entity):
-    def __init__(self, x, y, width, height, tileset, speed):
-        super().__init__(x, y, width, height, tileset, speed)
+    def remove(self):
+        if self.health <= 0:
+            self.remove()
+            Entitys.remove(self)
+            Objects.remove(self)
+            self.x = -1
+            self.y = -1
+            self.width = -1
+            self.height = -1
+            self.image = pg.image.load("transparent.png")
+            print("removed")
 
 
 
 
-    def sprint(self, value):
-        if value:
-            self.speed = self.speed * 1.7
-        else:
-            self.speed = self.speed / 1.7
 
-def check_input(key, value):
-    if key == pygame.K_a:
-        player1.directionADWS[0] = value
-    elif key == pygame.K_s:
-        player1.directionADWS[3] = value
-    elif key == pygame.K_w:
-        player1.directionADWS[2] = value
-    elif key == pygame.K_d:
-        player1.directionADWS[1] = value
-    elif key == pygame.K_LEFT:
-        player2.directionADWS[0] = value
-    elif key == pygame.K_DOWN:
-        player2.directionADWS[3] = value
-    elif key == pygame.K_UP:
-        player2.directionADWS[2] = value
-    elif key == pygame.K_RIGHT:
-        player2.directionADWS[1] = value
-    elif key == pygame.K_ESCAPE:
-        exit()
-    elif key == pygame.K_LSHIFT:
-        player1.sprint(value)
-    elif key == pygame.K_RSHIFT:
-        player2.sprint(value)
+background = pg.transform.scale(pg.image.load("bg.jpg"), WINDOW_SIZE)
+screen.blit(background, (0, 0))
 
 
-
-def load_tileset(filename, width, height):
-    image = pg.image.load(filename).convert_alpha()
-    image_width, image_height = image.get_size()
-    tileset = []
-    for tile_x in range(0, image_width // width):
-        line = []
-        tileset.append(line)
-        for tile_y in range(0, image_height // height):
-            rect = (tile_x * width, tile_y * height, width, height)
-            line.append(image.subsurface(rect))
-    return tileset
-
-
-
-
-#Objects
-player1 = Player(WINDOW_SIZE[0] / 2, WINDOW_SIZE[1] / 2, 75, 75, "player.png", 2)
-player2 = Player(WINDOW_SIZE[0] / 2 + 10, WINDOW_SIZE[1] / 2, 75, 75, "player.png", 2)
-
-
-while True:
-    for event in pg.event.get():
-        if event.type == pg.QUIT:
-            exit()
-        elif event.type == pg.KEYDOWN:
-            check_input(event.key, True)
-        elif event.type == pg.KEYUP:
-            check_input(event.key, False)
-
-    WINDOW.blit(background, (0, 0))
-
-    for obj in objects:
-        obj.update()
-
-    CLOCK.tick(FRAME_RATE)
-    pg.display.update()
+home_screen()
 
