@@ -34,6 +34,7 @@ class Object:
 
         objects.append(self)
 
+
     def draw(self):
         WINDOW.blit(pg.transform.scale(self.image, (self.width, self.height)), (self.x, self.y))
 
@@ -53,6 +54,8 @@ class Entity(Object):
         self.frame = 0
         self.frames = [0, 1, 0, 2]
         self.frame_timer = 0
+        self.directionADWS = [False, False, False, False]
+
 
     def change_direction(self):
         if self.velocity[0] < 0:
@@ -91,6 +94,8 @@ class Entity(Object):
         self.frame_timer = 0
 
     def update(self):
+        self.velocity[0] = self.directionADWS[1] - self.directionADWS[0]
+        self.velocity[1] = self.directionADWS[3] - self.directionADWS[2]
         self.x += self.velocity[0] * self.speed
         self.y += self.velocity[1] * self.speed
         self.draw()
@@ -100,36 +105,31 @@ class Player(Entity):
         super().__init__(x, y, width, height, tileset, speed)
 
 
+
+
     def sprint(self, value):
         if value:
             self.speed = self.speed * 1.7
         else:
             self.speed = self.speed / 1.7
 
-
-
-
-player1_input = {"left": False, "right": False, "up": False, "down": False}
-player2_input = {"left": False, "right": False, "up": False, "down": False}
-
-
 def check_input(key, value):
     if key == pygame.K_a:
-        player1_input["left"] = value
+        player1.directionADWS[0] = value
     elif key == pygame.K_s:
-        player1_input["down"] = value
+        player1.directionADWS[3] = value
     elif key == pygame.K_w:
-        player1_input["up"] = value
+        player1.directionADWS[2] = value
     elif key == pygame.K_d:
-        player1_input["right"] = value
+        player1.directionADWS[1] = value
     elif key == pygame.K_LEFT:
-        player2_input["left"] = value
+        player2.directionADWS[0] = value
     elif key == pygame.K_DOWN:
-        player2_input["down"] = value
+        player2.directionADWS[3] = value
     elif key == pygame.K_UP:
-        player2_input["up"] = value
+        player2.directionADWS[2] = value
     elif key == pygame.K_RIGHT:
-        player2_input["right"] = value
+        player2.directionADWS[1] = value
     elif key == pygame.K_ESCAPE:
         exit()
     elif key == pygame.K_LSHIFT:
@@ -167,12 +167,6 @@ while True:
             check_input(event.key, True)
         elif event.type == pg.KEYUP:
             check_input(event.key, False)
-
-    player1.velocity[0] = player1_input["right"] - player1_input["left"]
-    player1.velocity[1] = player1_input["down"] - player1_input["up"]
-
-    player2.velocity[0] = player2_input["right"] - player2_input["left"]
-    player2.velocity[1] = player2_input["down"] - player2_input["up"]
 
     WINDOW.blit(background, (0, 0))
 
