@@ -100,28 +100,42 @@ class Player(Entity):
         super().__init__(x, y, width, height, tileset, speed)
 
 
-    def sprint(self):
-        self.speed = 10
+    def sprint(self, value):
+        if value:
+            self.speed = self.speed * 1.7
+        else:
+            self.speed = self.speed / 1.7
 
 
 
 
-player_input = {"left": False, "right": False, "up": False, "down": False}
+player1_input = {"left": False, "right": False, "up": False, "down": False}
+player2_input = {"left": False, "right": False, "up": False, "down": False}
 
 
 def check_input(key, value):
     if key == pygame.K_a:
-        player_input["left"] = value
+        player1_input["left"] = value
     elif key == pygame.K_s:
-        player_input["down"] = value
+        player1_input["down"] = value
     elif key == pygame.K_w:
-        player_input["up"] = value
+        player1_input["up"] = value
     elif key == pygame.K_d:
-        player_input["right"] = value
+        player1_input["right"] = value
+    elif key == pygame.K_LEFT:
+        player2_input["left"] = value
+    elif key == pygame.K_DOWN:
+        player2_input["down"] = value
+    elif key == pygame.K_UP:
+        player2_input["up"] = value
+    elif key == pygame.K_RIGHT:
+        player2_input["right"] = value
     elif key == pygame.K_ESCAPE:
         exit()
-    elif key == pygame.K_f:
-        player.sprint()
+    elif key == pygame.K_LSHIFT:
+        player1.sprint(value)
+    elif key == pygame.K_RSHIFT:
+        player2.sprint(value)
 
 
 
@@ -141,7 +155,8 @@ def load_tileset(filename, width, height):
 
 
 #Objects
-player = Player(WINDOW_SIZE[0] / 2, WINDOW_SIZE[1] / 2, 100, 100, "player.png", 2)
+player1 = Player(WINDOW_SIZE[0] / 2, WINDOW_SIZE[1] / 2, 75, 75, "player.png", 2)
+player2 = Player(WINDOW_SIZE[0] / 2 + 10, WINDOW_SIZE[1] / 2, 75, 75, "player.png", 2)
 
 
 while True:
@@ -153,8 +168,11 @@ while True:
         elif event.type == pg.KEYUP:
             check_input(event.key, False)
 
-    player.velocity[0] = player_input["right"] - player_input["left"]
-    player.velocity[1] = player_input["down"] - player_input["up"]
+    player1.velocity[0] = player1_input["right"] - player1_input["left"]
+    player1.velocity[1] = player1_input["down"] - player1_input["up"]
+
+    player2.velocity[0] = player2_input["right"] - player2_input["left"]
+    player2.velocity[1] = player2_input["down"] - player2_input["up"]
 
     WINDOW.blit(background, (0, 0))
 
@@ -163,3 +181,4 @@ while True:
 
     CLOCK.tick(FRAME_RATE)
     pg.display.update()
+
