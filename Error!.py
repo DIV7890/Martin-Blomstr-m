@@ -100,6 +100,9 @@ class Player(Entity):
         super().__init__(x, y, width, height, tileset, speed)
 
 
+    def sprint(self):
+        self.speed = 10
+
 
 
 
@@ -117,7 +120,8 @@ def check_input(key, value):
         player_input["right"] = value
     elif key == pygame.K_ESCAPE:
         exit()
-    elif key == pygame.K_SHIFT:
+    elif key == pygame.K_f:
+        player.sprint()
 
 
 
