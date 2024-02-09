@@ -43,25 +43,28 @@
 # Uppgift 2.1
 # Funktionerna tar in integers eller floats som inputs och ger integers eller floats som outputs
 # Funktionen tar in två värden, multiplicerar de och får därmed en "area"
-#def beräknaArea(sida1, sida2):
-   #area = sida1*sida2
-   #return area
-#beräknaArea(2, 4)
-#def alternativtBeräknaArea(sida1, sida2):
-   #print(sida1*sida2)
-#alternativtBeräknaArea(3, 15)
-#def adderaSiffror(siffra1, siffra2):
-   #summa = siffra1+siffra2
-   #return summa
-#def funktion(x, y):
-   #a = x*y+y
-   #return a
-#def funktion(x, y):
-   #print(x+y)
-#import numpy as np #låt denna vara, återkommer till import
-#def funktion(a, b):
-   #c = np.sqrt(a*a + b*b)
-   #return c
+def beräknaArea(sida1, sida2):
+   area = sida1*sida2
+   return area
+beräknaArea(2, 4)
+
+def CalculateArea(side1, side2):
+   print(side1*side2)
+
+CalculateArea(3, 15)
+def AddNumbers(num1, num2):
+   sum = num1 + num2
+   return sum
+def function(x, y):
+   a = x*y+y
+   return a
+def function(x, y):
+   print(x+y)
+
+import numpy as np #låt denna vara, återkommer till import
+def function(a, b):
+   c = np.sqrt(a*a + b*b)
+   return c
 
 # Uppgift 2.2
 #def beräknaArea(sida1, sida2):

@@ -157,6 +157,7 @@ def load_tileset(filename, width, height):
 #Objects
 player1 = Player(WINDOW_SIZE[0] / 2, WINDOW_SIZE[1] / 2, 75, 75, "player.png", 2)
 player2 = Player(WINDOW_SIZE[0] / 2 + 10, WINDOW_SIZE[1] / 2, 75, 75, "player.png", 2)
+Wood_box = Object(WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2, 32, 32, "Wood_box.png")
 
 
 while True:

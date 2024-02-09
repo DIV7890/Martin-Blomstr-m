@@ -59,7 +59,6 @@ players = []
 
 
 # Instantiate mixer
-mixer.init()
 
 # Load audio file
 mixer.music.load('GD_level1.mp3')
