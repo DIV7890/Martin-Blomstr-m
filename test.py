@@ -29,9 +29,9 @@ screen = pg.display.set_mode(screen_size)
 class StaticObstacle(pg.sprite.Sprite):
 	def __init__(self,pos,size,groups):
 		super().__init__(groups)
-		self.image = pg.Surface(size)
-		self.image.fill((255, 0, 0, 128))
-		self.rect = self.image.get_rect(topleft = pos)
+		self.image = pg.Surface(size, pg.SRCALPHA)
+		self.image.fill((255, 0, 0, 255))
+		self.rect = self.image.get_rect(topleft=pos)
 		self.old_rect = self.rect.copy()
 
 
@@ -186,12 +186,16 @@ collision_sprites = pg.sprite.Group()
 player_sprites = pg.sprite.Group()  # Group for players
 
 # sprite setup
-StaticObstacle((100,300),(100,50),[all_sprites,collision_sprites])
-StaticObstacle((800,600),(100,200),[all_sprites,collision_sprites])
-StaticObstacle((900,200),(200,10),[all_sprites,collision_sprites])
+StaticObstacle((0, 0),(0.042 * screen_width, screen_height),[all_sprites,collision_sprites])
+StaticObstacle((screen_width - 0.042 * screen_width, 0), (0.042 * screen_width, screen_height),[all_sprites,collision_sprites])
+StaticObstacle((0, screen_height - 0.034 * screen_height),(screen_width, 0.034 * screen_height),[all_sprites,collision_sprites])
+StaticObstacle((0, 0), (screen_width / 2 - screen_width * 0.033, 0.245 * screen_height), [all_sprites,collision_sprites])
+StaticObstacle((screen_width / 2 + screen_width * 0.033, 0), (screen_width / 2 - screen_width * 0.033, 0.245 * screen_height), [all_sprites,collision_sprites])
+StaticObstacle((0, 0),(screen_width, 0.213 * screen_height),[all_sprites,collision_sprites])
 
-player1 = Player(all_sprites,collision_sprites,player_sprites,45,45,"player.png")
-player2 = Player(all_sprites,collision_sprites,player_sprites,45,45,"player.png")
+
+player1 = Player(all_sprites,collision_sprites,player_sprites, 1.5 * 0.0234 * screen_width, 2 * 0.042 * screen_height,"player.png")
+player2 = Player(all_sprites,collision_sprites,player_sprites, 1.5 * 0.0234 * screen_width, 2 * 0.042 * screen_height,"player.png")
 
 player_sprites.add(player1, player2)
 WINDOW.blit(background, (0, 0))
